@@ -1,6 +1,6 @@
 package de.dkwr.bompp;
 
-import commandexecutor.CommandQueue;
+import de.dkwr.bompp.commandexecutor.CommandQueue;
 import de.dkwr.bompp.commandhandler.BotCommandHandler;
 import de.dkwr.bompp.commandhandler.CommandHandler;
 import de.dkwr.bompp.commandhandler.ScriptCommandHandler;

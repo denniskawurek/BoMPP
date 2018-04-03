@@ -16,7 +16,7 @@
  */
 package de.dkwr.bompp.commandhandler;
 
-import commandexecutor.CommandQueue;
+import de.dkwr.bompp.commandexecutor.CommandQueue;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.ConfigReader;

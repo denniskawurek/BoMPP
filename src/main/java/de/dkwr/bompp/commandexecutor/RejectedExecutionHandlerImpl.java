@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package commandexecutor;
+package de.dkwr.bompp.commandexecutor;
 
 import de.dkwr.bompp.util.BotLogger;
 import java.util.concurrent.RejectedExecutionHandler;
