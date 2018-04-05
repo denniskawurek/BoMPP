@@ -41,8 +41,8 @@ public class ScriptCommandHandler extends CommandHandler {
      * @param commandList the commandList of this session
      * @param commandQueue the commandQueue of this session
      */
-    public ScriptCommandHandler(CommandList commandList, CommandQueue commandQueue) {
-        this.commandList = commandList;
+    public ScriptCommandHandler(CommandQueue commandQueue) {
+        this.commandList = CommandList.getInstance();
         this.commandQueue = commandQueue;
     }
 

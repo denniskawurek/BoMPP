@@ -52,13 +52,15 @@ public class BotCommandHandler extends CommandHandler {
         }
 
         if (cmdArr[0].equalsIgnoreCase("/send")) {
-            if (cmdArr.length != 3) {
+            if (cmdArr.length < 3) {
                 System.out.println("Error: To send a message you have to call\n"
                         + "/send [JID] [MESSAGE]");
                 return;
             }
             try {
-                this.omemoController.sendMessage(cmdArr[1], cmdArr[2]);
+                String message = cmd.substring(cmd.indexOf(" ")).trim();
+                message = message.substring(message.indexOf(" ")).trim();
+                this.omemoController.sendMessage(cmdArr[1], message);
             } catch (Exception ex) {
                 System.out.println("Failed to send message.");
                 BotLogger.getInstance().logException(ex);
@@ -112,7 +114,7 @@ public class BotCommandHandler extends CommandHandler {
             this.omemoController.printSelfJID();
             return;
         }
-        
+
         if (cmdArr[0].equalsIgnoreCase("/reload")) {
             try {
                 this.configReader.reloadConfigFile();
@@ -131,7 +133,7 @@ public class BotCommandHandler extends CommandHandler {
             }
             return;
         }
-        
+
         // if command does not exist print available commands
         System.out.println(this.getAllCommandsAsString());
     }

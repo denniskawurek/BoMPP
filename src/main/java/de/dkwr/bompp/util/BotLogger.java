@@ -63,18 +63,14 @@ public class BotLogger {
     }
 
     public synchronized void logException(Exception exception) {
+        exception.printStackTrace();
         String dateStr = currentTimeStr();
         try (FileWriter fw = new FileWriter(cfg.getStorePath() + "/" + logFileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
-            StackTraceElement[] stElArr = exception.getStackTrace();
-            printWriter.println(dateStr + exception.getMessage());
-            for (int i = 0; i <= stElArr.length - 1; i++) {
-                if (i == 0) {
-                    printWriter.println(dateStr + "Stacktrace:");
-                }
-                printWriter.println(stElArr[i].toString());
-            }
+
+            printWriter.println(dateStr + "Stacktrace:");
+            exception.printStackTrace(printWriter);
             bw.close();
             printWriter.close();
         } catch (IOException ex) {

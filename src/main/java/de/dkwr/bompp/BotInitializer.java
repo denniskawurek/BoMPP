@@ -22,7 +22,6 @@ import de.dkwr.bompp.commandhandler.ScriptCommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.MessageListener;
 import de.dkwr.bompp.omemo.OmemoController;
-import de.dkwr.bompp.util.CommandList;
 
 import java.io.File;
 
@@ -60,10 +59,9 @@ public class BotInitializer {
      * @param jid the XMPP/Jabber Id of the bot
      * @param pwd the corresponding password
      * @param path the store path
-     * @param commandList list of available commands for the client
      * @param commandQueue the CommandQueue where the commands belong to
      */
-    public void init(String jid, String pwd, String path, CommandList commandList, CommandQueue commandQueue) {
+    public void init(String jid, String pwd, String path, CommandQueue commandQueue) {
         try {
             SmackConfiguration.DEBUG = false;
             OmemoConfiguration.setAddOmemoHintBody(false);
@@ -85,7 +83,7 @@ public class BotInitializer {
             this.roster = Roster.getInstanceFor(connection);
             this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
             
-            CommandHandler scriptCommandHandler = new ScriptCommandHandler(commandList, commandQueue);
+            CommandHandler scriptCommandHandler = new ScriptCommandHandler(commandQueue);
             MessageListener messageListener = new MessageListener(scriptCommandHandler);
             this.omemoManager.addOmemoMessageListener(messageListener.setupOmemoMessageListener());
             this.omemoManager.addOmemoMucMessageListener(messageListener.setupOmemoMucMessageListener());

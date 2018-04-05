@@ -20,18 +20,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a list of available commands.<br/>
+ * Represents a list of available commands. The CommandList is a Singleton.<br/>
  *
  * @author Dennis Kawurek
  */
 public class CommandList {
 
-    private final HashMap<String, String[]> cmdMap;
-
-    public CommandList() {
-        this.cmdMap = new HashMap<>();
+    private HashMap<String, String[]> cmdMap = new HashMap<>();
+    private static final CommandList instance = new CommandList();
+    
+    private CommandList() {
     }
-
+    
+    
+    public static CommandList getInstance() {
+        return instance;
+    }
+    
     /**
      * Clears the command list.
      */
@@ -54,7 +59,7 @@ public class CommandList {
      *
      * @param cmd command
      * @param script absolute path to the script
-     * @param type script type
+     * @paam type script type
      * @param description description of the script
      */
     public void addCommand(String cmd, String script, String type, String description) {

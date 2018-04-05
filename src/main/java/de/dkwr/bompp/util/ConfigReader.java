@@ -35,7 +35,6 @@ public class ConfigReader {
     private final String configName = "config.json";
     private final String configFilePath;
     private final CommandList cmdList;
-
     /**
      * Creates an object of the ConfigReader and reads the config file.
      *
@@ -44,7 +43,7 @@ public class ConfigReader {
     public ConfigReader(String path) {
         this.storePath = path;
         this.configFilePath = this.storePath + "/" + this.configName;
-        this.cmdList = new CommandList();
+        this.cmdList = CommandList.getInstance();
     }
 
     public void loadConfigFile() throws Exception {
@@ -98,14 +97,6 @@ public class ConfigReader {
     public void reloadConfigFile() throws Exception {
         this.cmdList.clear();
         this.loadConfigFile();
-    }
-
-    /**
-     * Returns the command list.
-     * @return Object of type CommandList
-     */
-    public CommandList getCmdList() {
-        return this.cmdList;
     }
 
     public String getStorePath() {
