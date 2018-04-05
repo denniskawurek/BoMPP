@@ -21,8 +21,6 @@ import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 
 /**
@@ -63,7 +61,7 @@ public class BotCommandHandler extends CommandHandler {
                 this.omemoController.sendMessage(cmdArr[1], cmdArr[2]);
             } catch (Exception ex) {
                 System.out.println("Failed to send message.");
-                BotLogger.logException(ex);
+                BotLogger.getInstance().logException(ex);
             }
             return;
         }
@@ -76,7 +74,7 @@ public class BotCommandHandler extends CommandHandler {
                     this.omemoController.listAll(cmdArr[0]);
                 }
             } catch (Exception ex) {
-                BotLogger.logException(ex);
+                BotLogger.getInstance().logException(ex);
             }
             return;
         }
@@ -98,7 +96,7 @@ public class BotCommandHandler extends CommandHandler {
             try {
                 this.omemoController.regenerateKeys();
             } catch (Exception ex) {
-                BotLogger.logException(ex);
+                BotLogger.getInstance().logException(ex);
             }
             return;
         }
@@ -119,22 +117,22 @@ public class BotCommandHandler extends CommandHandler {
             try {
                 this.configReader.reloadConfigFile();
             } catch (Exception ex) {
-                BotLogger.logException(ex);
+                BotLogger.getInstance().logException(ex);
             }
         }
 
         if (cmdArr[0].equalsIgnoreCase("/q")) {
             try {
                 this.omemoController.closeConnection();
-                StaticScanner.scanner.close();
+                StaticScanner.close();
                 this.commandQueue.quitCommandExecution();
             } catch (Exception ex) {
-                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+                BotLogger.getInstance().logException(ex);
             }
             return;
         }
         
-        // if command not exists print available commands
+        // if command does not exist print available commands
         System.out.println(this.getAllCommandsAsString());
     }
 

@@ -60,6 +60,8 @@ public class BotInitializer {
      * @param jid the XMPP/Jabber Id of the bot
      * @param pwd the corresponding password
      * @param path the store path
+     * @param commandList list of available commands for the client
+     * @param commandQueue the CommandQueue where the commands belong to
      */
     public void init(String jid, String pwd, String path, CommandList commandList, CommandQueue commandQueue) {
         try {
@@ -97,8 +99,7 @@ public class BotInitializer {
             
             System.out.println("OMEMO setup complete. You can now start chatting.");
         } catch (Exception ex) {
-            System.err.println("Initializing of Bot failed: " + ex.getMessage());
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
     }
     

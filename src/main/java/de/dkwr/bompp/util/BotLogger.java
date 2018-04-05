@@ -16,26 +16,84 @@
  */
 package de.dkwr.bompp.util;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * This class provides static methods to log exceptions and (error) messages into a file.
+ * This class provides static methods to log exceptions and (error) messages
+ * into a file. BotLogger is a Singleton.
+ *
  * @author Dennis Kawurek
  */
 public class BotLogger {
-    public static void logMsg(String msg) {
-        System.out.println(msg);
+
+    private static final BotLogger instance = new BotLogger();
+    private static final BotConfiguration cfg = BotConfiguration.getInstance();
+    private static final String logFileName = ".log";
+    private static final String logDateFormat = "dd.MM. HH:mm:ss";
+
+    private BotLogger() {
+        super();
     }
-    public static void logException(Exception ex) {
-        // ToDo: Print this to the file
-        System.out.println(ex.getMessage());
-        /*StackTraceElement[] stElArr = ex.getStackTrace();
-        for (StackTraceElement stEl : stElArr) {
-            System.out.println(stEl.toString());
-        }*/
-        ex.printStackTrace();
-    }
-    
+
     public static void logException(Exception ex, String msg) {
         System.out.println(msg);
-        logException(ex);
+    }
+
+    public synchronized void logMsg(String msg) {
+        String dateStr = currentTimeStr();
+        try (FileWriter fw = new FileWriter(cfg.getStorePath() + "/" + logFileName, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter printWriter = new PrintWriter(bw)) {
+            printWriter.println(dateStr + "" + msg);
+            bw.close();
+            printWriter.close();
+        } catch (IOException ex) {
+            Logger.getLogger(BotLogger.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public synchronized void logException(Exception exception) {
+        String dateStr = currentTimeStr();
+        try (FileWriter fw = new FileWriter(cfg.getStorePath() + "/" + logFileName, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter printWriter = new PrintWriter(bw)) {
+            StackTraceElement[] stElArr = exception.getStackTrace();
+            printWriter.println(dateStr + exception.getMessage());
+            for (int i = 0; i <= stElArr.length - 1; i++) {
+                if (i == 0) {
+                    printWriter.println(dateStr + "Stacktrace:");
+                }
+                printWriter.println(stElArr[i].toString());
+            }
+            bw.close();
+            printWriter.close();
+        } catch (IOException ex) {
+            Logger.getLogger(BotLogger.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Get the instance.
+     *
+     * @return BotLogger instance
+     */
+    public static BotLogger getInstance() {
+        return instance;
+    }
+
+    private static String currentTimeStr() {
+        Date now = Calendar.getInstance().getTime();
+        Format formatter = new SimpleDateFormat(logDateFormat);
+        return "[" + formatter.format(now) + "]: ";
     }
 }

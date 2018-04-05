@@ -33,7 +33,7 @@ public class RejectedExecutionHandlerImpl implements RejectedExecutionHandler {
         try {
             executor.getQueue().put(r);
         } catch (InterruptedException ex) {
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
    
     }

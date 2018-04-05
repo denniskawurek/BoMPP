@@ -31,14 +31,10 @@ import org.json.simple.parser.JSONParser;
  */
 public class ConfigReader {
 
-    private final String path;
+    private final String storePath;
     private final String configName = "config.json";
     private final String configFilePath;
-    private String jid;
-    private String pwd;
     private final CommandList cmdList;
-    private int max_threads;
-    private int queue_size;
 
     /**
      * Creates an object of the ConfigReader and reads the config file.
@@ -46,8 +42,8 @@ public class ConfigReader {
      * @param path
      */
     public ConfigReader(String path) {
-        this.path = path;
-        this.configFilePath = this.path + "/" + this.configName;
+        this.storePath = path;
+        this.configFilePath = this.storePath + "/" + this.configName;
         this.cmdList = new CommandList();
     }
 
@@ -63,15 +59,18 @@ public class ConfigReader {
 
             JSONObject jsonConfig = (JSONObject) obj;
             JSONObject botConfig = (JSONObject) jsonConfig.get("bot");
-            JSONArray cmdList = (JSONArray) jsonConfig.get("cmds");
+            JSONArray cmdArr = (JSONArray) jsonConfig.get("cmds");
+            
+            BotConfiguration cfg = BotConfiguration.getInstance();
+            cfg.setJID((String) botConfig.get("jid"));
+            cfg.setPassword((String) botConfig.get("pwd"));
+            cfg.setMaxThreads(Integer.parseInt((String) botConfig.get("max_threads")));
+            cfg.setQueueSize(Integer.parseInt((String) botConfig.get("queue_size")));
+            cfg.setStorePath(this.storePath);
+            cfg.setConfigPath(this.configFilePath);
 
-            this.jid = (String) botConfig.get("jid");
-            this.pwd = (String) botConfig.get("pwd");
-            this.max_threads = Integer.parseInt((String) botConfig.get("max_threads"));
-            this.queue_size = Integer.parseInt((String) botConfig.get("queue_size"));
-
-            for (int i = 0; i < cmdList.size(); i++) {
-                JSONObject cmdObj = (JSONObject) cmdList.get(i);
+            for (int i = 0; i < cmdArr.size(); i++) {
+                JSONObject cmdObj = (JSONObject) cmdArr.get(i);
 
                 String cmd = (String) cmdObj.get("cmd");
                 String description = (String) cmdObj.get("description");
@@ -88,7 +87,7 @@ public class ConfigReader {
 
             System.out.println("Loaded config file with " + this.cmdList.getSize() + " commands");
         } catch (Exception ex) {
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
     }
 
@@ -109,38 +108,12 @@ public class ConfigReader {
         return this.cmdList;
     }
 
-    /**
-     * Sets the variable password to null, so it will not be on the heap
-     * anymore.<br/>
-     * This should be called after initializing the bot (as it is intendend to
-     * use the password only for initialization).
-     */
-    public void clearPassword() {
-        this.pwd = null;
-    }
-
-    public String getJID() {
-        return this.jid;
-    }
-
-    public String getPassword() {
-        return this.pwd;
-    }
-
     public String getStorePath() {
-        return this.path;
-    }
-    
-    public int getMaxThreads() {
-        return this.max_threads;
-    }
-    
-    public int getQueueSize() {
-        return this.queue_size;
+        return this.storePath;
     }
 
     private boolean pathExists() {
-        File f = new File(this.path);
+        File f = new File(this.storePath);
 
         if (f.isDirectory()) {
             return true;

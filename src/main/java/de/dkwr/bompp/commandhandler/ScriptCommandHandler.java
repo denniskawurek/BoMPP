@@ -52,8 +52,7 @@ public class ScriptCommandHandler extends CommandHandler {
     }
 
     @Override
-    public void handleCommand(String cmd) {
-    }
+    public void handleCommand(String cmd) {}
 
     @Override
     public void handleCommand(String cmd, String clientJID) {
@@ -72,7 +71,7 @@ public class ScriptCommandHandler extends CommandHandler {
                 this.commandQueue.addToQueue(executeScriptThread);
             }
         } catch (Exception ex) {
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
 
     }

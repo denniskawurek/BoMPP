@@ -198,7 +198,7 @@ public class OmemoController {
 
             }
         } catch (Exception ex) {
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
     }
     
@@ -209,7 +209,7 @@ public class OmemoController {
         try {
             omemoManager.purgeDevices();
         } catch (Exception ex) {
-           BotLogger.logException(ex);
+           BotLogger.getInstance().logException(ex);
         }
     }
     

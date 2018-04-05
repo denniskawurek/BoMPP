@@ -5,6 +5,7 @@ import de.dkwr.bompp.commandhandler.BotCommandHandler;
 import de.dkwr.bompp.commandhandler.CommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.ConfigReader;
+import de.dkwr.bompp.util.BotConfiguration;
 
 /**
  * Main class and entry point for the bot.
@@ -20,20 +21,21 @@ public class Main {
             } else if (args.length > 1 && storePath == null) { // variable storePath is not initialized, so take argument
                 storePath = args[0];
             }
-
+            BotLogger.getInstance();
             ConfigReader configReader = new ConfigReader(storePath);
             configReader.loadConfigFile();
+            BotConfiguration cfg = BotConfiguration.getInstance();
             
-            CommandQueue commandQueue = new CommandQueue(configReader.getMaxThreads(), configReader.getQueueSize());
+            CommandQueue commandQueue = new CommandQueue(cfg.getMaxThreads(), cfg.getQueueSize());
 
             BotInitializer botInitializer = new BotInitializer();
-            botInitializer.init(configReader.getJID(), configReader.getPassword(), storePath, configReader.getCmdList(), commandQueue);
-            configReader.clearPassword();
+            botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, configReader.getCmdList(), commandQueue);
+            cfg.clearPassword();
 
             CommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue);
             new BotControlThread(botCommandHandler).run();
         } catch (Exception ex) {
-            BotLogger.logException(ex);
+            BotLogger.getInstance().logException(ex);
         }
     }
 }
