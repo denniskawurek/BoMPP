@@ -20,7 +20,6 @@ package de.dkwr.bompp.commandexecutor;
 import de.dkwr.bompp.util.BotLogger;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Logger;
 
 /**
  * This is the standard handler when an execution fails.<br/>

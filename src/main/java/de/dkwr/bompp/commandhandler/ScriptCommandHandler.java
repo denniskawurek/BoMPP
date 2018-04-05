@@ -21,9 +21,6 @@ import de.dkwr.bompp.commandexecutor.ExecuteScriptThread;
 import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.CommandList;
-import de.dkwr.bompp.util.ConfigReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This CommandHandler is responsible for the execution of scripts after getting
@@ -65,7 +62,6 @@ public class ScriptCommandHandler extends CommandHandler {
                 this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
                 this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
             } else {
-                // Command Queue.addCommand(cmd, clientJID)
                 String[] cmdArr = cmd.split(" ");
                 String[] cmdDetails = this.commandList.getCommand(cmdArr[0]);
                 String scriptPath = cmdDetails[0];

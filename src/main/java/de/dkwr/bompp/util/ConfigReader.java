@@ -18,9 +18,6 @@ package de.dkwr.bompp.util;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

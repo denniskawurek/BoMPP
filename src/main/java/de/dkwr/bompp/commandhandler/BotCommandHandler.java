@@ -21,7 +21,6 @@ import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
