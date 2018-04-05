@@ -47,12 +47,20 @@ import org.whispersystems.libsignal.IdentityKey;
  * @author Dennis Kawurek based on @see <a href="https://github.com/vanitasvitae/clocc/">CLOCC by vanitasvitae</a>
  */
 public class OmemoController {
-    private OmemoManager omemoManager;
-    private SignalFileBasedOmemoStore omemoStore;
-    private AbstractXMPPConnection connection;
-    private ChatManager chatManager;
-    private Roster roster;
-
+    private final OmemoManager omemoManager;
+    private final SignalFileBasedOmemoStore omemoStore;
+    private final AbstractXMPPConnection connection;
+    private final ChatManager chatManager;
+    private final Roster roster;
+    
+    /**
+     * 
+     * @param connection The XMPP Connection of the Bot
+     * @param omemoManager The OmemoManager associated with the session
+     * @param omemoStore The Storage of the bot
+     * @param roster The Roster associated with the session
+     * @param chatManager The ChatManager used to send messages
+     */
     public OmemoController(AbstractXMPPConnection connection, OmemoManager omemoManager, SignalFileBasedOmemoStore omemoStore, Roster roster, ChatManager chatManager) {
         this.omemoManager = omemoManager;
         this.omemoStore = omemoStore;
@@ -60,7 +68,13 @@ public class OmemoController {
         this.chatManager = chatManager;
         this.roster = roster;
     }
-
+    
+    /**
+     * Sends a message to a JID
+     * @param jid the receiver
+     * @param message the message
+     * @throws Exception when there is no connection or the encryption fails
+     */
     public void sendMessage(String jid, String message) throws Exception {
         BareJid recipient = getJid(jid);
         if (recipient != null) {
@@ -85,7 +99,12 @@ public class OmemoController {
             }
         }
     }
-
+    
+    /**
+     * Lists the whole device list or a list for a JID.
+     * @param jidStr if is String: Lists all entries for the JID, if is NULL: Lists all entries
+     * @throws Exception when the device list request fails.
+     */
     public void listAll(String jidStr) throws Exception {
         if (jidStr == null) {
             for (RosterEntry r : roster.getEntries()) {
@@ -121,7 +140,11 @@ public class OmemoController {
             }
         }
     }
-
+    
+    /**
+     * Trusts an identity.
+     * @param jidStr the JID to trust.
+     */
     public void trustIdentities(String jidStr) {
         try {
             System.out.println("Usage: \n0: Untrusted, 1: Trusted, otherwise: Undecided");
@@ -178,7 +201,10 @@ public class OmemoController {
             BotLogger.logException(ex);
         }
     }
-
+    
+    /**
+     * Clears the device list.
+     */
     public void clearDeviceList() {
         try {
             omemoManager.purgeDevices();
@@ -186,15 +212,26 @@ public class OmemoController {
            BotLogger.logException(ex);
         }
     }
-
+    
+    /**
+     * Creates new keys for the bot
+     * @throws Exception when creating keys fails.
+     */
     public void regenerateKeys() throws Exception {
         this.omemoManager.regenerate();
     }
     
+    /**
+     * Returns the fingerprint of the bot.
+     * @return the fingerprint
+     */
     public OmemoFingerprint getFingerprint() {
         return this.omemoManager.getOurFingerprint();
     }
     
+    /**
+     * Prints the JID and device Id of the bot.
+     */
     public void printSelfJID() {
         System.out.println(
                 "JID: " + this.omemoManager.getOwnJid() + "\n"
@@ -202,6 +239,10 @@ public class OmemoController {
         );
     }
     
+    /**
+     * Closes the connection of the bot.
+     * @throws Exception when closing fails.
+     */
     public void closeConnection() throws Exception {
         this.connection.disconnect(new Presence(Presence.Type.unavailable, "You are still connected.", 100, Presence.Mode.away));
     }
