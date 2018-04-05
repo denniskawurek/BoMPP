@@ -41,7 +41,9 @@ public class BotConfiguration {
     }
 
     public void setJID(String jid) {
-        this.jid = jid;
+        if (jid == null) {
+            this.jid = jid;
+        }
     }
 
     public void setPassword(String password) {
