@@ -15,12 +15,16 @@ import de.dkwr.bompp.util.BotConfiguration;
 public class Main {
     public static void main(String[] args) {
         try {
-            String storePath = ""; // if is != null, take this as store path otherwise args[0]
+            String storePath = null; // if is != null, take this as store path otherwise args[0]
             if (args.length < 1 && storePath == null) {
                 throw new IllegalArgumentException("You must call the bot with one argument, which is the absolute path to the store folder.");
-            } else if (args.length > 1 && storePath == null) { // variable storePath is not initialized, so take argument
+            } else if (args.length >= 1 && storePath == null) { // variable storePath is not initialized, so take argument
                 storePath = args[0];
+            } else {
+                System.err.println("You need to set the storage path.");
+                System.exit(0);
             }
+            
             BotLogger.getInstance();
             ConfigReader configReader = new ConfigReader(storePath);
             configReader.loadConfigFile();
