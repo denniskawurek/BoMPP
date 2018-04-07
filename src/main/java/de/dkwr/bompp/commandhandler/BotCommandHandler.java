@@ -19,6 +19,7 @@ package de.dkwr.bompp.commandhandler;
 import de.dkwr.bompp.commandexecutor.CommandQueue;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.OmemoController;
+import de.dkwr.bompp.util.CommandList;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
@@ -121,6 +122,16 @@ public class BotCommandHandler extends CommandHandler {
             } catch (Exception ex) {
                 BotLogger.getInstance().logException(ex);
             }
+            return;
+        }
+
+        if (cmdArr[0].equalsIgnoreCase("/commands")) {
+            try {
+                System.out.println(CommandList.getInstance().toString());
+            } catch (Exception ex) {
+                BotLogger.getInstance().logException(ex);
+            }
+            return;
         }
 
         if (cmdArr[0].equalsIgnoreCase("/q")) {
@@ -140,17 +151,23 @@ public class BotCommandHandler extends CommandHandler {
 
     @Override
     public String getAllCommandsAsString() {
-        return "Following commands are available:\n"
-                + "/send [JID] [MESSAGE] - send a message to [JID]\n"
-                + "/list - list all devices\n"
-                + "/list [JID] - list all devices for [JID]"
-                + "/trust [JID] - trust the identity of [JID]\n"
-                + "/clear - clear the device list\n"
-                + "/regenerate - regenerate keys\n"
-                + "/fingerprint - print the bots fingerprint\n"
-                + "/which - print bots JID and DeviceId\n"
-                + "/reload - reloads the configuration file\n"
-                + "/q - closes the connection & ends the bot";
+        StringBuilder cmdStr = new StringBuilder();
+        String listFmt = "%-25s%-25s\n";
+        
+        cmdStr.append("Following commands are available:\n");
+        cmdStr.append(String.format(listFmt, "/send [JID] [MESSAGE]", "Send a message to [JID]"));
+        cmdStr.append(String.format(listFmt, "/list", "List all devices"));
+        cmdStr.append(String.format(listFmt, "/list [JID]", "List all devices for [JID]"));
+        cmdStr.append(String.format(listFmt, "/trust [JID]", "Trust the identity of [JID]"));
+        cmdStr.append(String.format(listFmt, "/clear", "Clear the device list"));
+        cmdStr.append(String.format(listFmt, "/regenerate", "Regenerate keys"));
+        cmdStr.append(String.format(listFmt, "/fingerprint", "Print the bots fingerprint"));
+        cmdStr.append(String.format(listFmt, "/which", "Print bots JID and DeviceId"));
+        cmdStr.append(String.format(listFmt, "/reload", "Reloads the configuration file"));
+        cmdStr.append(String.format(listFmt, "/commands", "Prints loaded commands"));
+        cmdStr.append(String.format(listFmt, "/q", "Closes the connection & ends the bot"));
+        
+        return cmdStr.toString();
     }
 
     @Override

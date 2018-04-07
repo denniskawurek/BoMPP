@@ -38,7 +38,6 @@ public class ScriptCommandHandler extends CommandHandler {
 
     /**
      * Creates a new ScriptCommandHandler object
-     * @param commandList the commandList of this session
      * @param commandQueue the commandQueue of this session
      */
     public ScriptCommandHandler(CommandQueue commandQueue) {

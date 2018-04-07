@@ -88,12 +88,10 @@ public class CommandList {
     @Override
     public String toString() {
         StringBuilder cmdStr = new StringBuilder();
-
+        String listFmt = "%-25s%-25s\n";
+        
         for (Map.Entry<String, String[]> entry : this.cmdMap.entrySet()) {
-            cmdStr.append(entry.getKey());
-            cmdStr.append(": ");
-            cmdStr.append(entry.getValue()[2]);
-            cmdStr.append("\n");
+            cmdStr.append(String.format(listFmt, entry.getKey(), entry.getValue()[2]));
         }
 
         return cmdStr.toString();
