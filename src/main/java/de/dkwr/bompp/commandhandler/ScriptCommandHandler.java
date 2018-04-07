@@ -61,13 +61,20 @@ public class ScriptCommandHandler extends CommandHandler {
                 this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
                 this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
             } else {
-                String[] cmdArr = cmd.split(" ");
-                String[] cmdDetails = this.commandList.getCommand(cmdArr[0]);
+                String[] cmdAsArr = cmd.split(" ");
+                String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
                 String scriptPath = cmdDetails[0];
+                String execType = cmdDetails[1];
+                cmdAsArr[0] = scriptPath; // replaces the command with the path
                 
-                cmdArr[0] = scriptPath; // replaces the command with the path
+                if(!execType.isEmpty()) {
+                    String[] tempArr = new String[cmdAsArr.length+1];
+                    System.arraycopy(cmdAsArr, 0, tempArr, 1, cmdAsArr.length);
+                    tempArr[0] = execType;
+                    cmdAsArr = tempArr;
+                }
                 
-                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdArr, clientJID, true, this.omemoController);
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             }
         } catch (Exception ex) {

@@ -15,17 +15,27 @@ So you must create a ```config.json``` in your folder with this structure:
 
 	{
 		"bot": {
-			"jid": "jid@domain.com",
-                        "pwd": "BetterPasswordThanThis",
-                        "max_threads": "2",
-                        "queue_size" : "10"
+                    "jid": "jid@domain.com",
+                    "pwd": "BetterPasswordThanThis",
+                    "max_threads": "2",
+                    "queue_size" : "10"
 		},
 		"cmds": [{
-			"cmd": "/start",
-			"type": "BASH",
-			"script": ~/bompp_store/script.sh",
-			"description": "Description will appear when calling /help"
-		}]
+                    "cmd": "lampp",
+                    "exec_type": "",
+                    "script": "/home/dennis/scripts/lampp.sh",
+                    "description": "Starts lampp"
+                }, {
+                    "cmd": "say_hi",
+                    "exec_type": "python3.5",
+                    "script": "/home/dennis/scripts/echo.py",
+                    "description": "Echos Hello world."
+                }, {
+                    "cmd": "show_list",
+                    "exec_type": "/opt/lampp/bin/php",
+                    "script": "/home/dennis/scripts/show_list.php",
+                    "description": "Prints a list."
+                }]
 	}
 
 Then you call the .jar by changing to the directory where it lays and calling the following command:

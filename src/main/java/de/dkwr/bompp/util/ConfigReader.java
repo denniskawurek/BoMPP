@@ -73,14 +73,14 @@ public class ConfigReader {
 
                 String cmd = (String) cmdObj.get("cmd");
                 String description = (String) cmdObj.get("description");
-                String type = (String) cmdObj.get("type");
+                String exec_type = (String) cmdObj.get("exec_type");
                 String script = (String) cmdObj.get("script");
 
                 if (this.cmdList.cmdExists(cmd)) {
                     System.out.println("Error: Found multiple command " + cmd + "!\n"
                             + "Added the first occurence. Please check your config file.");
                 } else {
-                    this.cmdList.addCommand(cmd, script, type, description);
+                    this.cmdList.addCommand(cmd, script, exec_type, description);
                 }
             }
 
