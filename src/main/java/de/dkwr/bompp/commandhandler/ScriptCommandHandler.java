@@ -56,6 +56,7 @@ public class ScriptCommandHandler extends CommandHandler {
     @Override
     public void handleCommand(String cmd, String clientJID) {
         try {
+            cmd = cmd.toLowerCase();
             if (!this.commandList.cmdExists(cmd)) {
                 this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
                 this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
