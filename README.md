@@ -41,9 +41,10 @@ So you must create a ```config.json``` in your folder with this structure:
 Then you call the .jar by changing to the directory where it lays and calling the following command:
 
 ```
-java -jar bompp.jar STOREPATH
+java -jar bompp.jar -p STOREPATH [-w]
 ```
-Where ``STOREPATH`` is the directory created above.
+Where ``STOREPATH`` is the absolute path to the directory created above.
+``-w`` has to be set if you're working on a Windows machine.
 
 ### Source from repo
 If you downloaded the source code and opened the project in an IDE you must also create the storage folder with the config file.

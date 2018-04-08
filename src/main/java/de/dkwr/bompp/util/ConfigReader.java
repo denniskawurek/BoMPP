@@ -40,9 +40,13 @@ public class ConfigReader {
      *
      * @param path
      */
-    public ConfigReader(String path) {
+    public ConfigReader(String path, boolean isWindows) {
         this.storePath = path;
-        this.configFilePath = this.storePath + "/" + this.configName;
+        if(isWindows) {
+            this.configFilePath = this.storePath + "\\" + this.configName;
+        } else {
+            this.configFilePath = this.storePath + "/" + this.configName;
+        }
         this.cmdList = CommandList.getInstance();
     }
 
@@ -51,7 +55,7 @@ public class ConfigReader {
         JSONParser parser = new JSONParser();
 
         if (!this.pathExists() || !this.configFileExists()) {
-            throw new IllegalArgumentException("The given path of the store doesn't exists or there is no config file in the store.");
+            throw new IllegalArgumentException("The given path of the store doesn't exists or there is no config file in the store: " + this.configFilePath);
         }
         try {
             Object obj = parser.parse(new FileReader(this.configFilePath));
@@ -105,7 +109,6 @@ public class ConfigReader {
 
     private boolean pathExists() {
         File f = new File(this.storePath);
-
         if (f.isDirectory()) {
             return true;
         } else if (!f.isDirectory() || !f.exists()) {
@@ -116,7 +119,6 @@ public class ConfigReader {
 
     private boolean configFileExists() {
         File f = new File(this.configFilePath);
-
         if (f.exists()) {
             return true;
         }

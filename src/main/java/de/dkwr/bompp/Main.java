@@ -15,19 +15,11 @@ import de.dkwr.bompp.util.BotConfiguration;
 public class Main {
     public static void main(String[] args) {
         try {
-            String storePath = null; // if is != null, take this as store path otherwise args[0]
-            if (args.length < 1 && storePath == null) {
-                System.err.println("You must call the bot with one argument, which is the absolute path to the store folder.");
-                System.exit(0);
-            } else if (args.length >= 1 && storePath == null) { // variable storePath is not initialized, so take argument
-                storePath = args[0];
-            } else {
-                System.err.println("You need to set the storage path.");
-                System.exit(0);
-            }
-            
+            String storePath = getStoragePath(args);
+            boolean isWindows = isWindows(args);
+
             BotLogger.getInstance();
-            ConfigReader configReader = new ConfigReader(storePath);
+            ConfigReader configReader = new ConfigReader(storePath, isWindows);
             configReader.loadConfigFile();
             BotConfiguration cfg = BotConfiguration.getInstance();
             
@@ -42,5 +34,42 @@ public class Main {
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
+    }
+
+    private static String getStoragePath(String[] args) {
+        if (args.length < 2) {
+            printHelp();
+            System.exit(0);
+        } else if (args.length >= 1) { // if storePath is or is not initialized take args
+            for(int i = 0; i <= args.length-1; i++) {
+                if(args[i].equalsIgnoreCase("-p") && i < args.length-1) {
+                    return args[i+1];
+                }
+            }
+        } else {
+            printHelp();
+            System.exit(0);
+        }
+        return null; //should never reach this
+    }
+
+    private static boolean isWindows(String[] args) {
+        if(args.length < 2) {
+            return false;
+        } else if(args.length >= 1) {
+            for(int i = 0; i <= args.length-1; i++) {
+                if(args[i].equalsIgnoreCase("-w")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void printHelp() {
+        String listFmt = "%-25s%-25s";
+        System.out.println("usage: -p STORAGE_PATH [-w]");
+        System.out.println(String.format(listFmt, "-p STORAGE_PATH", "Absolute path of the storage"));
+        System.out.println(String.format(listFmt, "-w", "Used platform is windows"));
     }
 }
