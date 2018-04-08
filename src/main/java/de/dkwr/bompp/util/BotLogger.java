@@ -51,7 +51,7 @@ public class BotLogger {
 
     public synchronized void logMsg(String msg) {
         String dateStr = currentTimeStr();
-        try (FileWriter fw = new FileWriter(cfg.getStorePath() + "/" + logFileName, true);
+        try (FileWriter fw = new FileWriter(cfg.getStorePath() + logFileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
             printWriter.println(dateStr + "" + msg);
@@ -65,10 +65,9 @@ public class BotLogger {
     public synchronized void logException(Exception exception) {
         exception.printStackTrace();
         String dateStr = currentTimeStr();
-        try (FileWriter fw = new FileWriter(cfg.getStorePath() + "/" + logFileName, true);
+        try (FileWriter fw = new FileWriter(cfg.getStorePath() + logFileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
-
             printWriter.println(dateStr + "Stacktrace:");
             exception.printStackTrace(printWriter);
             bw.close();

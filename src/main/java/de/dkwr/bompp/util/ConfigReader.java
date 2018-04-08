@@ -41,12 +41,12 @@ public class ConfigReader {
      * @param path
      */
     public ConfigReader(String path, boolean isWindows) {
-        this.storePath = path;
         if(isWindows) {
-            this.configFilePath = this.storePath + "\\" + this.configName;
+            this.storePath = path + "\\";
         } else {
-            this.configFilePath = this.storePath + "/" + this.configName;
+            this.storePath = path + "/";
         }
+        this.configFilePath = this.storePath + this.configName;
         this.cmdList = CommandList.getInstance();
     }
 
