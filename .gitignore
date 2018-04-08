@@ -29,3 +29,7 @@ target/
 
 # netbeans settings
 nbactions.xml
+
+# intellij files
+.idea/
+*.iml
