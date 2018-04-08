@@ -35,6 +35,19 @@ public class ConfigReader {
     private final String configName = "config.json";
     private final String configFilePath;
     private final CommandList cmdList;
+
+    // Config file keys
+    private final String BOT_KEY = "bot";
+    private final String CMDS_KEY = "cmds";
+    private final String JID_KEY = "jid";
+    private final String PWD_KEY = "pwd";
+    private final String MAX_THREADS_KEY = "max_threads";
+    private final String QUEUE_SIZE_KEY = "queue_size";
+    private final String CMD_KEY = "cmd";
+    private final String DESCRIPTION_KEY = "description";
+    private final String EXEC_TYPE_KEY = "exec_type";
+    private final String SCRIPT_KEY = "script";
+
     /**
      * Creates an object of the ConfigReader and reads the config file.
      *
@@ -61,24 +74,27 @@ public class ConfigReader {
             Object obj = parser.parse(new FileReader(this.configFilePath));
 
             JSONObject jsonConfig = (JSONObject) obj;
-            JSONObject botConfig = (JSONObject) jsonConfig.get("bot");
-            JSONArray cmdArr = (JSONArray) jsonConfig.get("cmds");
-            
+            JSONObject botConfig = (JSONObject) jsonConfig.get(this.BOT_KEY);
+            JSONArray cmdArr = (JSONArray) jsonConfig.get(this.CMDS_KEY);
+
             BotConfiguration cfg = BotConfiguration.getInstance();
-            cfg.setJID((String) botConfig.get("jid"));
-            cfg.setPassword((String) botConfig.get("pwd"));
-            cfg.setMaxThreads(Integer.parseInt((String) botConfig.get("max_threads")));
-            cfg.setQueueSize(Integer.parseInt((String) botConfig.get("queue_size")));
             cfg.setStorePath(this.storePath);
             cfg.setConfigPath(this.configFilePath);
+
+            this.checkConfigFile(botConfig);
+
+            cfg.setJID((String) botConfig.get(this.JID_KEY));
+            cfg.setPassword((String) botConfig.get(this.PWD_KEY));
+            cfg.setMaxThreads(Integer.parseInt((String) botConfig.get(this.MAX_THREADS_KEY)));
+            cfg.setQueueSize(Integer.parseInt((String) botConfig.get(this.QUEUE_SIZE_KEY)));
 
             for (int i = 0; i < cmdArr.size(); i++) {
                 JSONObject cmdObj = (JSONObject) cmdArr.get(i);
 
-                String cmd = (String) cmdObj.get("cmd");
-                String description = (String) cmdObj.get("description");
-                String exec_type = (String) cmdObj.get("exec_type");
-                String script = (String) cmdObj.get("script");
+                String cmd = (String) cmdObj.get(this.CMD_KEY);
+                String description = (String) cmdObj.get(this.DESCRIPTION_KEY);
+                String exec_type = (String) cmdObj.get(this.EXEC_TYPE_KEY);
+                String script = (String) cmdObj.get(this.SCRIPT_KEY);
 
                 if (this.cmdList.cmdExists(cmd)) {
                     System.out.println("Error: Found multiple command " + cmd + "!\n"
@@ -91,6 +107,7 @@ public class ConfigReader {
             System.out.println("Loaded config file with " + this.cmdList.getSize() + " commands");
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
+            System.exit(0);
         }
     }
 
@@ -103,8 +120,15 @@ public class ConfigReader {
         this.loadConfigFile();
     }
 
-    public String getStorePath() {
-        return this.storePath;
+    private void checkConfigFile(JSONObject botConfig) {
+        // checks if the config file has all required fields
+        if(botConfig.get(this.JID_KEY) == null
+                || botConfig.get(this.PWD_KEY) == null
+                || botConfig.get(this.MAX_THREADS_KEY) == null
+                || botConfig.get(this.QUEUE_SIZE_KEY) == null) {
+            throw new IllegalArgumentException("Error while loading the config file." +
+                    "Please take a look at the documentation to see which fields are required.");
+        }
     }
 
     private boolean pathExists() {
