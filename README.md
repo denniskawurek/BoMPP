@@ -10,40 +10,15 @@ BoMPP is based on [Smack](https://github.com/igniterealtime/Smack).
 
 ### Released .jar
 If you download a release you have to create a folder anywhere which will act as a store and configuration.
-So you must create a ```config.json``` in your folder with this structure:
+So you must create a ```config.json``` in your folder with the structure, which [is defined in the wiki](https://github.com/denniskawurek/BoMPP/wiki/Structure-of-config.json).
 
-
-	{
-		"bot": {
-                    "jid": "jid@domain.com",
-                    "pwd": "BetterPasswordThanThis",
-                    "max_threads": "2",
-                    "queue_size" : "10"
-		},
-		"cmds": [{
-                    "cmd": "lampp",
-                    "exec_type": "",
-                    "script": "/home/dennis/scripts/lampp.sh",
-                    "description": "Starts lampp"
-                }, {
-                    "cmd": "say_hi",
-                    "exec_type": "python3.5",
-                    "script": "/home/dennis/scripts/echo.py",
-                    "description": "Echos Hello world."
-                }, {
-                    "cmd": "show_list",
-                    "exec_type": "/opt/lampp/bin/php",
-                    "script": "/home/dennis/scripts/show_list.php",
-                    "description": "Prints a list."
-                }]
-	}
-
-Then you call the .jar by changing to the directory where it lays and calling the following command:
+Then you execute the JAR-File by calling the following command:
 
 ```
 java -jar bompp.jar -p STOREPATH [-w]
 ```
-Where ``STOREPATH`` is the absolute path to the directory created above.
+
+``STOREPATH`` is the absolute path to the directory created above.
 ``-w`` has to be set if you're working on a Windows machine.
 
 ### Source from repo
@@ -59,8 +34,7 @@ If you are getting an error like ```java.security.InvalidKeyException: Illegal k
 
 ## Further comments
 
-There exists an earlier implementation of this in Python. Unfortunately the integration of OMEMO in Python is pretty poor, so I changed
-to JAVA.
+There exists an earlier implementation of this in Python. Unfortunately the integration of OMEMO in Python is pretty poor, so I changed to JAVA.
 
 # Credits
 Some parts of the code (esp. the OmemoController) bases on the [Command Line OMEMO Chat Client](https://github.com/vanitasvitae/clocc) by vanitasvitae.
