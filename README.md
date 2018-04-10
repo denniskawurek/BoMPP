@@ -28,13 +28,17 @@ But you can set a hard coded path url in ``Main.java`` with the variable ``store
 ## Encryption
 Fortunately Smack has [Omemo](https://github.com/igniterealtime/Smack/blob/master/documentation/extensions/omemo.md) integrated which is an implementation of the Signal Protocol.
 
+Take a look into the [wiki](https://github.com/denniskawurek/BoMPP/wiki/Enable-encryption---how-to-trust-a-user) to see how to start sending and receiving encrypted messages.
+
 ## Error handling
 If you are getting an error like ```java.security.InvalidKeyException: Illegal key size``` you need to
 [enable unlimited cryptography key sizes](https://stackoverflow.com/a/3864276/5725291).
 
 ## Further comments
-
 There exists an earlier implementation of this in Python. Unfortunately the integration of OMEMO in Python is pretty poor, so I changed to JAVA.
+
+## Issues & Contributions
+... are welcome!
 
 # Credits
 Some parts of the code (esp. the OmemoController) bases on the [Command Line OMEMO Chat Client](https://github.com/vanitasvitae/clocc) by vanitasvitae.
