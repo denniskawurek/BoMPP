@@ -53,12 +53,8 @@ public class ConfigReader {
      *
      * @param path
      */
-    public ConfigReader(String path, boolean isWindows) {
-        if(isWindows) {
-            this.storePath = path + "\\";
-        } else {
-            this.storePath = path + "/";
-        }
+    public ConfigReader(String path, String fileSeparator) {
+        this.storePath = path + fileSeparator;
         this.configFilePath = this.storePath + this.configName;
         this.cmdList = CommandList.getInstance();
     }

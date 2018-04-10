@@ -16,10 +16,10 @@ public class Main {
     public static void main(String[] args) {
         try {
             String storePath = getStoragePath(args);
-            boolean isWindows = isWindows(args);
+            String fileSeparator = getFileSeparator();
 
             BotLogger.getInstance();
-            ConfigReader configReader = new ConfigReader(storePath, isWindows);
+            ConfigReader configReader = new ConfigReader(storePath, fileSeparator);
             configReader.loadConfigFile();
             BotConfiguration cfg = BotConfiguration.getInstance();
             
@@ -53,23 +53,13 @@ public class Main {
         return null; //should never reach this
     }
 
-    private static boolean isWindows(String[] args) {
-        if(args.length < 2) {
-            return false;
-        } else if(args.length >= 1) {
-            for(int i = 0; i <= args.length-1; i++) {
-                if(args[i].equalsIgnoreCase("-w")) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private static String getFileSeparator() {
+        return System.getProperties().getProperty("file.separator");
     }
 
     private static void printHelp() {
         String listFmt = "%-25s%-25s";
-        System.out.println("usage: -p STORAGE_PATH [-w]");
+        System.out.println("usage: -p STORAGE_PATH");
         System.out.println(String.format(listFmt, "-p STORAGE_PATH", "Absolute path of the storage"));
-        System.out.println(String.format(listFmt, "-w", "Used platform is windows"));
     }
 }
