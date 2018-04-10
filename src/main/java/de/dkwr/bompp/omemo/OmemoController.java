@@ -165,7 +165,6 @@ public class OmemoController {
 
                 OmemoDevice d = new OmemoDevice(jid, i);
                 SignalOmemoSession s = (SignalOmemoSession) this.omemoStore.getOmemoSessionOf(this.omemoManager, d);
-                System.out.println(s);
                 if (s.getIdentityKey() == null) {
                     try {
                         System.out.println("Build session...");
