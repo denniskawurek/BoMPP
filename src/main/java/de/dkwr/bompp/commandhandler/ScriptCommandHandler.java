@@ -57,10 +57,7 @@ public class ScriptCommandHandler extends CommandHandler {
     public void handleCommand(String cmd, String clientJID) {
         try {
             cmd = cmd.toLowerCase();
-            if (!this.commandList.cmdExists(cmd)) {
-                this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
-                this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
-            } else {
+            if (this.commandList.cmdExists(cmd)) {
                 String[] cmdAsArr = cmd.split(" ");
                 String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
                 String scriptPath = cmdDetails[0];
@@ -76,11 +73,15 @@ public class ScriptCommandHandler extends CommandHandler {
                 
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
+            } else if(cmd.equalsIgnoreCase("help")) {
+                this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
+            } else {
+                this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
+                this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
             }
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
-
     }
 
     @Override
