@@ -87,9 +87,9 @@ public class OmemoController {
                     System.out.println(d.toString());
                     OmemoDevice device = new OmemoDevice(d.getJid(), d.getDeviceId());
                     OmemoFingerprint fp = omemoManager.getFingerprint(device);
-                    //omemoManager.trustOmemoIdentity(d, fp);
                     System.out.println(fp.toString());
                 }
+                System.out.println("Call /trust to trust these identites.");
             } catch (CannotEstablishOmemoSessionException e) {
                 encrypted = omemoManager.encryptForExistingSessions(e, message);
             }
@@ -186,6 +186,7 @@ public class OmemoController {
                     System.out.println("Status: Undecided");
                 }
                 System.out.println(OmemoKeyUtil.prettyFingerprint(s.getFingerprint()));
+                System.out.println("Press 0 to untrust or 1 to trust.");
                 String decision = StaticScanner.scanner.nextLine();
                 if (decision.equals("0")) {
                     this.omemoStore.distrustOmemoIdentity(this.omemoManager, d, s.getIdentityKey());
