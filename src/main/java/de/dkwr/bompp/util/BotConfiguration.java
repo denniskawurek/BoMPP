@@ -31,6 +31,7 @@ public class BotConfiguration {
     private int queue_size;
     private String configFilePath;
     private String storePath;
+    private boolean enableXMPPDebugMode = false;
 
     private BotConfiguration() {
         super();
@@ -66,6 +67,10 @@ public class BotConfiguration {
         this.configFilePath = configFilePath;
     }
 
+    public void setEnableXMPPDebugMode(boolean isEnabled) {
+        this.enableXMPPDebugMode = isEnabled;
+    }
+
     public String getJID() {
         return this.jid;
     }
@@ -84,6 +89,10 @@ public class BotConfiguration {
 
     public String getStorePath() {
         return this.storePath;
+    }
+
+    public boolean getEnableXMPPDebugMode() {
+        return this.enableXMPPDebugMode;
     }
 
     public String getConfigPath() {

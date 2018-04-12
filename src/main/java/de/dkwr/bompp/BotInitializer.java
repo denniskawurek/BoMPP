@@ -60,10 +60,11 @@ public class BotInitializer {
      * @param pwd the corresponding password
      * @param path the store path
      * @param commandQueue the CommandQueue where the commands belong to
+     * @param enableXMPPDebugMode true|false whether the XMPP debug mode provided by smack shall be enabled
      */
-    public void init(String jid, String pwd, String path, CommandQueue commandQueue) {
+    public void init(String jid, String pwd, String path, CommandQueue commandQueue, boolean enableXMPPDebugMode) {
         try {
-            SmackConfiguration.DEBUG = false;
+            SmackConfiguration.DEBUG = enableXMPPDebugMode;
             OmemoConfiguration.setAddOmemoHintBody(false);
 
             this.connection = new XMPPTCPConnection(jid, pwd);

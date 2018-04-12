@@ -26,7 +26,7 @@ public class Main {
             CommandQueue commandQueue = new CommandQueue(cfg.getMaxThreads(), cfg.getQueueSize());
 
             BotInitializer botInitializer = new BotInitializer();
-            botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, commandQueue);
+            botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, commandQueue, cfg.getEnableXMPPDebugMode());
             cfg.clearPassword();
 
             CommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue);

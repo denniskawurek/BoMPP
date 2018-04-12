@@ -47,6 +47,7 @@ public class ConfigReader {
     private final String DESCRIPTION_KEY = "description";
     private final String EXEC_TYPE_KEY = "exec_type";
     private final String SCRIPT_KEY = "script";
+    private final String ENABLE_XMPP_DEBUG = "enable_xmpp_debug";
 
     /**
      * Creates an object of the ConfigReader and reads the config file.
@@ -83,6 +84,9 @@ public class ConfigReader {
             cfg.setPassword((String) botConfig.get(this.PWD_KEY));
             cfg.setMaxThreads(Integer.parseInt((String) botConfig.get(this.MAX_THREADS_KEY)));
             cfg.setQueueSize(Integer.parseInt((String) botConfig.get(this.QUEUE_SIZE_KEY)));
+            if(botConfig.get(this.ENABLE_XMPP_DEBUG) != null) {
+                cfg.setEnableXMPPDebugMode((Boolean) botConfig.get(this.ENABLE_XMPP_DEBUG));
+            }
 
             for (int i = 0; i < cmdArr.size(); i++) {
                 JSONObject cmdObj = (JSONObject) cmdArr.get(i);
