@@ -17,6 +17,8 @@
 package de.dkwr.bompp.commandexecutor;
 
 import de.dkwr.bompp.omemo.OmemoController;
+import de.dkwr.bompp.util.BotLogger;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -71,7 +73,14 @@ public class ExecuteScriptThread implements Runnable {
                 System.out.println("End of execution of " + paramList.get(0) + " Exit code: " + exec.exitValue());
             }
         } catch (Exception ex) {
-            Logger.getLogger(ExecuteScriptThread.class.getName()).log(Level.SEVERE, null, ex);
+            BotLogger.getInstance().logException(ex);
+            if(this.clientJID != null) {
+                try {
+                    this.omemoController.sendMessage(this.clientJID, "Failed to execute the command " + paramList.get(0) + "\nPlease try it again.");
+                } catch (Exception e) {
+                    BotLogger.getInstance().logException(e);
+                }
+            }
         }
     }
 
