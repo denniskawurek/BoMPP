@@ -51,26 +51,32 @@ public class ScriptCommandHandler extends CommandHandler {
     }
 
     @Override
-    public void handleCommand(String cmd) {}
+    public void handleCommand(String cmd) {
+        try {
+            cmd = cmd.toLowerCase();
+            if (this.commandList.cmdExists(cmd)) {
+                String[] cmdAsArr = this.convertCmdToArr(cmd);
+
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, null, true, this.omemoController);
+                this.commandQueue.addToQueue(executeScriptThread);
+            } else if(cmd.equalsIgnoreCase("help")) {
+                System.out.println("These commands are available:\n" + this.getAllCommandsAsString());
+            } else {
+                System.out.println("This command doesn't exist.");
+                System.out.println("These commands are available:\n" + this.getAllCommandsAsString());
+            }
+        } catch (Exception ex) {
+            BotLogger.getInstance().logException(ex);
+        }
+    }
 
     @Override
     public void handleCommand(String cmd, String clientJID) {
         try {
             cmd = cmd.toLowerCase();
             if (this.commandList.cmdExists(cmd)) {
-                String[] cmdAsArr = cmd.split(" ");
-                String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
-                String scriptPath = cmdDetails[0];
-                String execType = cmdDetails[1];
-                cmdAsArr[0] = scriptPath; // replaces the command with the path
-                
-                if(!execType.isEmpty()) {
-                    String[] tempArr = new String[cmdAsArr.length+1];
-                    System.arraycopy(cmdAsArr, 0, tempArr, 1, cmdAsArr.length);
-                    tempArr[0] = execType;
-                    cmdAsArr = tempArr;
-                }
-                
+                String[] cmdAsArr = this.convertCmdToArr(cmd);
+
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
@@ -82,6 +88,23 @@ public class ScriptCommandHandler extends CommandHandler {
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
+    }
+
+    private String[] convertCmdToArr(String cmd) {
+        String[] cmdAsArr = cmd.split(" ");
+        String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
+        String scriptPath = cmdDetails[0];
+        String execType = cmdDetails[1];
+        cmdAsArr[0] = scriptPath; // replaces the command with the path
+
+        if(!execType.isEmpty()) {
+            String[] tempArr = new String[cmdAsArr.length+1];
+            System.arraycopy(cmdAsArr, 0, tempArr, 1, cmdAsArr.length);
+            tempArr[0] = execType;
+            cmdAsArr = tempArr;
+        }
+
+        return cmdAsArr;
     }
 
     @Override

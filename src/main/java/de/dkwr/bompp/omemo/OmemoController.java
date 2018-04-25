@@ -68,7 +68,7 @@ public class OmemoController {
         this.chatManager = chatManager;
         this.roster = roster;
     }
-    
+
     /**
      * Sends a message to a JID
      * @param jid the receiver

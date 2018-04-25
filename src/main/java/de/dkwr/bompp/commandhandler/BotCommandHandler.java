@@ -36,11 +36,13 @@ public class BotCommandHandler extends CommandHandler {
     private OmemoController omemoController;
     private final ConfigReader configReader;
     private final CommandQueue commandQueue;
+    private CommandHandler scriptCommandHandler;
 
-    public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue) {
+    public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler) {
         this.omemoController = omemoController;
         this.configReader = configReader;
         this.commandQueue = commandQueue;
+        this.scriptCommandHandler = scriptCommandHandler;
     }
 
     @Override
@@ -134,6 +136,13 @@ public class BotCommandHandler extends CommandHandler {
             return;
         }
 
+        if (cmdArr[0].equalsIgnoreCase("/exec")) {
+            String execCmd = cmd.substring(cmdArr[0].length() + 1);
+            System.out.println(execCmd);
+            this.scriptCommandHandler.handleCommand(execCmd);
+            return;
+        }
+
         if (cmdArr[0].equalsIgnoreCase("/q")) {
             try {
                 this.omemoController.closeConnection();
@@ -165,6 +174,7 @@ public class BotCommandHandler extends CommandHandler {
         cmdStr.append(String.format(listFmt, "/which", "Print bots JID and DeviceId"));
         cmdStr.append(String.format(listFmt, "/reload", "Reloads the configuration file"));
         cmdStr.append(String.format(listFmt, "/commands", "Prints loaded commands"));
+        cmdStr.append(String.format(listFmt, "/exec CMD", "Execute a command from Bot CLI"));
         cmdStr.append(String.format(listFmt, "/q", "Closes the connection & ends the bot"));
         
         return cmdStr.toString();

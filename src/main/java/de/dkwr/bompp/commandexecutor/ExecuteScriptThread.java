@@ -63,8 +63,13 @@ public class ExecuteScriptThread implements Runnable {
                     }
                 }
             }
-            System.out.println("End of execution of " + paramList.get(0) + " for " + clientJID + " Exit code: " + exec.exitValue());
-            this.omemoController.sendMessage(this.clientJID, strBuilder.toString());
+
+            if(this.clientJID != null) {
+                System.out.println("End of execution of " + paramList.get(0) + " for " + clientJID + " Exit code: " + exec.exitValue());
+                this.omemoController.sendMessage(this.clientJID, strBuilder.toString());
+            } else {
+                System.out.println("End of execution of " + paramList.get(0) + " Exit code: " + exec.exitValue());
+            }
         } catch (Exception ex) {
             Logger.getLogger(ExecuteScriptThread.class.getName()).log(Level.SEVERE, null, ex);
         }

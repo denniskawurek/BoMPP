@@ -29,7 +29,7 @@ public class Main {
             botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, commandQueue, cfg.getEnableXMPPDebugMode());
             cfg.clearPassword();
 
-            CommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue);
+            CommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue, botInitializer.getScriptCommandHandler());
             new BotControlThread(botCommandHandler).run();
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);

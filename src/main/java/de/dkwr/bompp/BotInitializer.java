@@ -52,6 +52,7 @@ public class BotInitializer {
     private OmemoController omemoController;
     private ChatManager chatManager;
     private Roster roster;
+    private CommandHandler scriptCommandHandler;
 
     /**
      * Initializes the XMPP connection and OMEMOManager for the bot with all
@@ -84,7 +85,7 @@ public class BotInitializer {
             this.roster = Roster.getInstanceFor(connection);
             this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
             
-            CommandHandler scriptCommandHandler = new ScriptCommandHandler(commandQueue);
+            this.scriptCommandHandler = new ScriptCommandHandler(commandQueue);
             MessageListener messageListener = new MessageListener(scriptCommandHandler);
             this.omemoManager.addOmemoMessageListener(messageListener.setupOmemoMessageListener());
             this.omemoManager.addOmemoMucMessageListener(messageListener.setupOmemoMucMessageListener());
@@ -108,5 +109,9 @@ public class BotInitializer {
      */
     public OmemoController getOmemoController() {
         return this.omemoController;
+    }
+
+    public CommandHandler getScriptCommandHandler() {
+        return this.scriptCommandHandler;
     }
 }
