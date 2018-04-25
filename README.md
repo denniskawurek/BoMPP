@@ -20,6 +20,8 @@ java -jar bompp.jar -p STOREPATH
 
 ``STOREPATH`` is the absolute path to the directory created above.
 
+Note: Released .jar doesn't exist currently. :P
+
 ### Source from repo
 If you downloaded the source code and opened the project in an IDE you must also create the storage folder with the config file.
 But you can set a hard coded path url in ``Main.java`` with the variable ``storePath``.
