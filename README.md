@@ -1,6 +1,6 @@
 
 # BoMPP
-... is an XMPP/Jabber bot to execute remotely own written (Shell, Python, PHP, ...) scripts.
+... is a XMPP/Jabber bot to execute remotely own written (Shell, Python, PHP, ...) scripts.
 An use case is e.g. to controll a Raspberry PI.
 All you need are two XMPP/Jabber accounts.
 
