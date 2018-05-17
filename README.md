@@ -27,10 +27,15 @@ If you downloaded the source code and opened the project in an IDE you must also
 But you can set a hard coded path url in ``Main.java`` with the variable ``storePath``.
 
 ### Build from source
-1. Run `mvn package` in the root directory of BoMPP.
-2. It will create a `/target` directory, where your `*-fat.jar` lays.
-3. Download the [BouncyCastle Provider](https://www.bouncycastle.org/latest_releases.html) (section Signed JAR files)
-4. Rename the provider to `bcprov.jar` and copy the jar to the same directory as the BoMPP.jar
+1. Clone the repo
+```
+git clone https://github.com/denniskawurek/BoMPP.git
+cd BoMPP
+```
+2. Run `mvn package` in the root directory of BoMPP.
+3. It will create a `/target` directory, where your `*-fat.jar` lays.
+4. Download the [BouncyCastle Provider](https://www.bouncycastle.org/latest_releases.html) (section Signed JAR files)
+5. Rename the provider to `bcprov.jar` and copy the jar to the same directory as the BoMPP.jar
 
 ## Encryption
 Fortunately Smack has [Omemo](https://github.com/igniterealtime/Smack/blob/master/documentation/extensions/omemo.md) integrated which is an implementation of the Signal Protocol.
