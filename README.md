@@ -9,8 +9,10 @@ BoMPP is based on [Smack](https://github.com/igniterealtime/Smack).
 ## Setup
 
 ### Released .jar
-If you download a release you have to create a folder anywhere which will act as a store and configuration.
+If you download a [release](https://github.com/denniskawurek/BoMPP/releases) you have to create a folder anywhere which will act as a store and configuration.
 So you must create a ```config.json``` in your folder with the structure, which [is defined in the wiki](https://github.com/denniskawurek/BoMPP/wiki/Structure-of-config.json).
+
+After this you need to download the [BouncyCastle Provider](https://www.bouncycastle.org/latest_releases.html) (section Signed JAR files). Rename the provider to `bcprov.jar` and copy the jar to the same directory as the BoMPP.jar
 
 Then you execute the JAR-File by calling the following command:
 
@@ -19,8 +21,6 @@ java -jar bompp.jar -p STOREPATH
 ```
 
 ``STOREPATH`` is the absolute path to the directory created above.
-
-Note: Released .jar doesn't exist currently. :P
 
 ### Start from IDE
 If you downloaded the source code and opened the project in an IDE you must also create the storage folder with the config file.
