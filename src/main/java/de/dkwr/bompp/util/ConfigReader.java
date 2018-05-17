@@ -43,6 +43,8 @@ public class ConfigReader {
     private final String PWD_KEY = "pwd";
     private final String MAX_THREADS_KEY = "max_threads";
     private final String QUEUE_SIZE_KEY = "queue_size";
+    private final String ADMIN_JID_KEY = "admin_jid";
+    private final String LISTEN_ONLY_ADMIN_KEY = "listen_only_admin";
     private final String CMD_KEY = "cmd";
     private final String DESCRIPTION_KEY = "description";
     private final String EXEC_TYPE_KEY = "exec_type";
@@ -52,7 +54,8 @@ public class ConfigReader {
     /**
      * Creates an object of the ConfigReader and reads the config file.
      *
-     * @param path
+     * @param path path of the configuration file. The configuration file has to be a JSON
+     * @param fileSeparator the filesepartaor of the used OS
      */
     public ConfigReader(String path, String fileSeparator) {
         this.storePath = path + fileSeparator;
@@ -84,6 +87,8 @@ public class ConfigReader {
             cfg.setPassword((String) botConfig.get(this.PWD_KEY));
             cfg.setMaxThreads(Integer.parseInt((String) botConfig.get(this.MAX_THREADS_KEY)));
             cfg.setQueueSize(Integer.parseInt((String) botConfig.get(this.QUEUE_SIZE_KEY)));
+            cfg.setAdminJID((String) botConfig.get(this.ADMIN_JID_KEY));
+            cfg.setListenOnlyAdmin((Boolean) botConfig.get(this.LISTEN_ONLY_ADMIN_KEY));
             if(botConfig.get(this.ENABLE_XMPP_DEBUG) != null) {
                 cfg.setEnableXMPPDebugMode((Boolean) botConfig.get(this.ENABLE_XMPP_DEBUG));
             }
@@ -125,7 +130,9 @@ public class ConfigReader {
         if(botConfig.get(this.JID_KEY) == null
                 || botConfig.get(this.PWD_KEY) == null
                 || botConfig.get(this.MAX_THREADS_KEY) == null
-                || botConfig.get(this.QUEUE_SIZE_KEY) == null) {
+                || botConfig.get(this.QUEUE_SIZE_KEY) == null
+                || botConfig.get(this.ADMIN_JID_KEY) == null
+                || botConfig.get(this.LISTEN_ONLY_ADMIN_KEY) == null) {
             throw new IllegalArgumentException("Error while loading the config file." +
                     "Please take a look at the documentation to see which fields are required.");
         }

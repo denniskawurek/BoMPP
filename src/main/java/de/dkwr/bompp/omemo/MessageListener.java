@@ -17,6 +17,8 @@
 package de.dkwr.bompp.omemo;
 
 import de.dkwr.bompp.commandhandler.CommandHandler;
+import de.dkwr.bompp.util.BotConfiguration;
+import de.dkwr.bompp.util.BotLogger;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
@@ -30,17 +32,20 @@ import org.jxmpp.jid.EntityBareJid;
 
 /**
  * Provides all message listeners for the bot.
+ *
  * @author Dennis Kawurek
  */
 public class MessageListener {
+
     private CommandHandler commandHandler;
-    
+
     public MessageListener(CommandHandler commandHandler) {
         this.commandHandler = commandHandler;
     }
-    
+
     /**
      * Returns an Listener which listens for omemo decrypted messages by a user.
+     *
      * @return an MessageListener of the type OmemoMessageListener
      */
     public OmemoMessageListener setupOmemoMessageListener() {
@@ -48,9 +53,16 @@ public class MessageListener {
             @Override
             public void onOmemoMessageReceived(String decryptedBody, Message encryptedMessage, Message wrappingMessage, OmemoMessageInformation omemoInformation) {
                 BareJid sender = encryptedMessage.getFrom().asBareJid();
+                BotConfiguration cfg = BotConfiguration.getInstance();
                 if (sender != null && decryptedBody != null) {
-                    System.out.println("\033[34m" + sender + ": " + decryptedBody + "\033[0m ");
-                    commandHandler.handleCommand(decryptedBody, sender.toString());
+                    if ((cfg.getListenOnlyAdmin() && cfg.getAdminJID().equalsIgnoreCase(sender.toString()))
+                            || !cfg.getListenOnlyAdmin()) {
+                        System.out.println("\033[34m" + sender + ": " + decryptedBody + "\033[0m ");
+                        commandHandler.handleCommand(decryptedBody, sender.toString());
+                    } else {
+                        BotLogger.getInstance().logMsg("Got message by other user than administrator:\n"
+                                + "" + sender + ": " + decryptedBody);
+                    }
                 }
             }
 
@@ -60,9 +72,10 @@ public class MessageListener {
             }
         };
     }
-    
+
     /**
      * Returns an MessageListeners which listens for Multi-user Chat messages.
+     *
      * @return MessageListener of type OmemoMucMessageListener
      */
     public OmemoMucMessageListener setupOmemoMucMessageListener() {
@@ -80,9 +93,11 @@ public class MessageListener {
             }
         };
     }
-    
+
     /**
-     * Returns a MessageListener which listens for not encrypted incoming messages.
+     * Returns a MessageListener which listens for not encrypted incoming
+     * messages.
+     *
      * @return MessageListener of type IncomingChatMessageListener
      */
     public IncomingChatMessageListener setupIncomingMessageListener() {

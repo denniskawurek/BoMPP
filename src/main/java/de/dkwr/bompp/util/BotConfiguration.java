@@ -32,6 +32,8 @@ public class BotConfiguration {
     private String configFilePath;
     private String storePath;
     private boolean enableXMPPDebugMode = false;
+    private String adminJID;
+    private Boolean listenOnlyAdmin;
 
     private BotConfiguration() {
         super();
@@ -70,6 +72,14 @@ public class BotConfiguration {
     public void setEnableXMPPDebugMode(boolean isEnabled) {
         this.enableXMPPDebugMode = isEnabled;
     }
+    
+    public void setAdminJID(String adminJID) {
+        this.adminJID = adminJID;
+    }
+    
+    public void setListenOnlyAdmin(Boolean listenOnlyAdmin) {
+        this.listenOnlyAdmin = listenOnlyAdmin;
+    }
 
     public String getJID() {
         return this.jid;
@@ -97,6 +107,14 @@ public class BotConfiguration {
 
     public String getConfigPath() {
         return this.configFilePath;
+    }
+    
+    public String getAdminJID() {
+        return this.adminJID;
+    }
+    
+    public boolean getListenOnlyAdmin() {
+        return this.listenOnlyAdmin;
     }
 
     /**
