@@ -94,6 +94,7 @@ public class OmemoController {
                 encrypted = omemoManager.encryptForExistingSessions(e, message);
             }
             if (encrypted != null) {
+                System.out.println("Replying to " + recipient.toString() + ": " + message);
                 Chat current = this.chatManager.chatWith(recipient.asEntityBareJidIfPossible());
                 current.send(encrypted);
             }

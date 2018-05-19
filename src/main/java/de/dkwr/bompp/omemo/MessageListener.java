@@ -57,6 +57,7 @@ public class MessageListener {
                 if (sender != null && decryptedBody != null) {
                     if ((cfg.getListenOnlyAdmin() && cfg.getAdminJID().equalsIgnoreCase(sender.toString()))
                             || !cfg.getListenOnlyAdmin()) {
+                        System.out.println("Received new message:");
                         System.out.println("\033[34m" + sender + ": " + decryptedBody + "\033[0m ");
                         commandHandler.handleCommand(decryptedBody, sender.toString());
                     } else {

@@ -38,6 +38,7 @@ public class BotControlThread implements Runnable {
     public BotControlThread(CommandHandler commandHandler) {
         this.commandHandler = commandHandler;
         this.inputReader = StaticScanner.scanner;
+        System.out.println(this.commandHandler.getAllCommandsAsString());
     }
     
     @Override

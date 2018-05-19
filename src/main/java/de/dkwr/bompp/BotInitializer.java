@@ -95,9 +95,9 @@ public class BotInitializer {
             
             this.omemoController = new OmemoController(this.connection, this.omemoManager, this.omemoStore, this.roster, this.chatManager);
             
-            scriptCommandHandler.setOmemoController(this.omemoController);
+            this.scriptCommandHandler.setOmemoController(this.omemoController);
             
-            System.out.println("OMEMO setup complete. You can now start chatting.");
+            System.out.println("OMEMO setup complete and BoMPP started!");
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
