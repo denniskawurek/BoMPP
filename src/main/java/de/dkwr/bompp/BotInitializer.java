@@ -24,6 +24,7 @@ import de.dkwr.bompp.omemo.MessageListener;
 import de.dkwr.bompp.omemo.OmemoController;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -63,13 +64,12 @@ public class BotInitializer {
      * @param commandQueue the CommandQueue where the commands belong to
      * @param enableXMPPDebugMode true|false whether the XMPP debug mode provided by smack shall be enabled
      */
-    public void init(String jid, String pwd, String path, CommandQueue commandQueue, boolean enableXMPPDebugMode) {
+    public void init(String jid, char[] pwd, String path, CommandQueue commandQueue, boolean enableXMPPDebugMode) {
         try {
             SmackConfiguration.DEBUG = enableXMPPDebugMode;
             OmemoConfiguration.setAddOmemoHintBody(false);
 
-            this.connection = new XMPPTCPConnection(jid, pwd);
-
+            this.connection = new XMPPTCPConnection(jid, new String(pwd));
             SignalOmemoService.acknowledgeLicense();
             SignalOmemoService.setup();
             OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(new File(path));

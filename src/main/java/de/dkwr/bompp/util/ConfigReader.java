@@ -16,6 +16,7 @@
  */
 package de.dkwr.bompp.util;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileReader;
 
@@ -84,11 +85,18 @@ public class ConfigReader {
             this.checkConfigFile(botConfig);
 
             cfg.setJID((String) botConfig.get(this.JID_KEY));
-            cfg.setPassword((String) botConfig.get(this.PWD_KEY));
+            
             cfg.setMaxThreads(Integer.parseInt((String) botConfig.get(this.MAX_THREADS_KEY)));
             cfg.setQueueSize(Integer.parseInt((String) botConfig.get(this.QUEUE_SIZE_KEY)));
             cfg.setAdminJID((String) botConfig.get(this.ADMIN_JID_KEY));
             cfg.setListenOnlyAdmin((Boolean) botConfig.get(this.LISTEN_ONLY_ADMIN_KEY));
+            
+            if(botConfig.get(this.PWD_KEY) != null) {
+                cfg.setPassword(((String) botConfig.get(this.PWD_KEY)).toCharArray());
+            } else {
+                cfg.setPassword(this.readPasswordFromConsole());
+            }
+            
             if(botConfig.get(this.ENABLE_XMPP_DEBUG) != null) {
                 cfg.setEnableXMPPDebugMode((Boolean) botConfig.get(this.ENABLE_XMPP_DEBUG));
             }
@@ -128,13 +136,18 @@ public class ConfigReader {
     private void checkConfigFile(JSONObject botConfig) {
         // checks if the config file has all required fields
         if(botConfig.get(this.JID_KEY) == null
-                || botConfig.get(this.PWD_KEY) == null
                 || botConfig.get(this.MAX_THREADS_KEY) == null
                 || botConfig.get(this.QUEUE_SIZE_KEY) == null
                 || botConfig.get(this.ADMIN_JID_KEY) == null
                 || botConfig.get(this.LISTEN_ONLY_ADMIN_KEY) == null) {
             throw new IllegalArgumentException("Error while loading the config file." +
                     "Please take a look at the documentation to see which fields are required.");
+        }
+        
+        // if there is a password in the config file set, print a hint.
+        if(botConfig.get(this.PWD_KEY) != null) {
+            System.out.println("\u001B[33mWarning: You set a password in your config file, which is a security risk.\n"
+                    + "If possible you should remove the field from your config and use the command line instead.\u001B[0m");
         }
     }
 
@@ -154,5 +167,17 @@ public class ConfigReader {
             return true;
         }
         return false;
+    }
+    
+    private char[] readPasswordFromConsole() {
+        Console console = System.console();
+        if(console == null) {
+            BotLogger.getInstance().logMsg("Error in console declaration. Please run this program from console.\n"
+                    + "If you are running from an IDE you should set your password in the config file and remove it later.");
+            System.exit(1);
+        }
+        char[] password = console.readPassword("Enter password for server JID:\n");
+        
+        return password;
     }
 }

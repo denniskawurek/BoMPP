@@ -16,6 +16,8 @@
  */
 package de.dkwr.bompp.util;
 
+import java.util.Arrays;
+
 /**
  * This class provides static methods to access the Bot configuration.
  * Configuration is a Singleton.
@@ -26,7 +28,7 @@ public class BotConfiguration {
 
     private static final BotConfiguration instance = new BotConfiguration();
     private String jid;
-    private String pwd;
+    private char[] pwd;
     private int max_threads;
     private int queue_size;
     private String configFilePath;
@@ -49,7 +51,7 @@ public class BotConfiguration {
         }
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.pwd = password;
     }
 
@@ -85,7 +87,7 @@ public class BotConfiguration {
         return this.jid;
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         return this.pwd;
     }
 
@@ -118,12 +120,11 @@ public class BotConfiguration {
     }
 
     /**
-     * Sets the variable of the password to null, so it will not be on the heap
-     * anymore.<br/>
+     * Overwrite password array.\n
      * This should be called after initializing the bot (as it is intendend to
      * use the password only for initialization).
      */
     public void clearPassword() {
-        this.pwd = null;
+        Arrays.fill(this.pwd, ' ');
     }
 }

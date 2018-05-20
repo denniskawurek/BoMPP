@@ -22,7 +22,7 @@ public class Main {
             ConfigReader configReader = new ConfigReader(storePath, fileSeparator);
             configReader.loadConfigFile();
             BotConfiguration cfg = BotConfiguration.getInstance();
-            
+
             CommandQueue commandQueue = new CommandQueue(cfg.getMaxThreads(), cfg.getQueueSize());
 
             BotInitializer botInitializer = new BotInitializer();
@@ -41,9 +41,9 @@ public class Main {
             printHelp();
             System.exit(0);
         } else if (args.length >= 1) { // if storePath is or is not initialized take args
-            for(int i = 0; i <= args.length-1; i++) {
-                if(args[i].equalsIgnoreCase("-p") && i < args.length-1) {
-                    return args[i+1];
+            for (int i = 0; i <= args.length - 1; i++) {
+                if (args[i].equalsIgnoreCase("-p") && i < args.length - 1) {
+                    return args[i + 1];
                 }
             }
         } else {
