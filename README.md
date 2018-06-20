@@ -51,6 +51,7 @@ There exists an earlier implementation of this in Python. Unfortunately the inte
 
 ## Issues & Contributions
 ... are welcome!
+You may take a look at the [architecture of BoMPP](https://github.com/denniskawurek/BoMPP/wiki/Architecture).
 
 # Credits
 Some parts of the code (esp. the OmemoController) bases on the [Command Line OMEMO Chat Client](https://github.com/vanitasvitae/clocc) by vanitasvitae.
