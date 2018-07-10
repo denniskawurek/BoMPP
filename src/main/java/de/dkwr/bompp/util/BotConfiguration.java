@@ -29,8 +29,8 @@ public class BotConfiguration {
     private static final BotConfiguration instance = new BotConfiguration();
     private String jid;
     private char[] pwd;
-    private int max_threads;
-    private int queue_size;
+    private int maxThreads;
+    private int queueSize;
     private String configFilePath;
     private String storePath;
     private boolean enableXMPPDebugMode = false;
@@ -56,11 +56,11 @@ public class BotConfiguration {
     }
 
     public void setMaxThreads(int max_threads) {
-        this.max_threads = max_threads;
+        this.maxThreads = max_threads;
     }
 
     public void setQueueSize(int queue_size) {
-        this.queue_size = queue_size;
+        this.queueSize = queue_size;
     }
 
     public void setStorePath(String storePath) {
@@ -92,11 +92,11 @@ public class BotConfiguration {
     }
 
     public int getMaxThreads() {
-        return this.max_threads;
+        return this.maxThreads;
     }
 
     public int getQueueSize() {
-        return this.queue_size;
+        return this.queueSize;
     }
 
     public String getStorePath() {

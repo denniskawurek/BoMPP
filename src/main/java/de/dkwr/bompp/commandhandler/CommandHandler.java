@@ -22,29 +22,29 @@ import de.dkwr.bompp.omemo.OmemoController;
  * Abstract class for a command handler. All command handlers have to extend this class.
  * @author Dennis Kawurek
  */
-public abstract class CommandHandler {
+public interface CommandHandler {
     /**
      * Handles a command by a Client, who doesn't expect an answer (e.g. bot administrator).
      * @param cmd command
      */
-    public abstract void handleCommand(String cmd);
+    void handleCommand(String cmd);
     
     /**
      * Handles a command by a Client, who also expects an answer.
      * @param cmd
      * @param jid 
      */
-    public abstract void handleCommand(String cmd, String jid);
+    void handleCommand(String cmd, String jid);
     
     /**
      * Returns all available and implemented commands of this CommandHandler as a String (can be used for a 'help' command).
      * @return 
      */
-    public abstract String getAllCommandsAsString();
+    abstract String getAllCommandsAsString();
     
     /**
      * Sets a new OmemoController
      * @param omemoController the OmemoController for the current session.
      */
-    public abstract void setOmemoController(OmemoController omemoController);
+    abstract void setOmemoController(OmemoController omemoController);
 }

@@ -59,11 +59,11 @@ public class CommandList {
      *
      * @param cmd command
      * @param script absolute path to the script
-     * @param exec_type script type
+     * @param execType script type
      * @param description description of the script
      */
-    public void addCommand(String cmd, String script, String exec_type, String description) {
-        this.cmdMap.put(cmd, new String[]{script, exec_type, description});
+    public void addCommand(String cmd, String script, String execType, String description) {
+        this.cmdMap.put(cmd, new String[]{script, execType, description});
     }
 
     /**

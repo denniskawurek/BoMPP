@@ -30,11 +30,12 @@ import de.dkwr.bompp.util.CommandList;
  *
  * @author Dennis Kawurek
  */
-public class ScriptCommandHandler extends CommandHandler {
+public class ScriptCommandHandler implements CommandHandler {
 
     private OmemoController omemoController;
     private final CommandList commandList;
     private final CommandQueue commandQueue;
+    private final String COMMANDS_AVAILABLE_STR = "These commands are available:\n";
 
     /**
      * Creates a new ScriptCommandHandler object
@@ -60,10 +61,10 @@ public class ScriptCommandHandler extends CommandHandler {
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, null, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
-                System.out.println("These commands are available:\n" + this.getAllCommandsAsString());
+                System.out.println(this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             } else {
                 System.out.println("This command doesn't exist.");
-                System.out.println("These commands are available:\n" + this.getAllCommandsAsString());
+                System.out.println(this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             }
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
@@ -80,10 +81,10 @@ public class ScriptCommandHandler extends CommandHandler {
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
-                this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
+                this.omemoController.sendMessage(clientJID,  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             } else {
                 this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
-                this.omemoController.sendMessage(clientJID, "These commands are available:\n" + this.getAllCommandsAsString());
+                this.omemoController.sendMessage(clientJID, this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             }
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);

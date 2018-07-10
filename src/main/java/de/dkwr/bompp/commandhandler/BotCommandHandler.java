@@ -31,7 +31,7 @@ import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
  *
  * @author Dennis Kawurek
  */
-public class BotCommandHandler extends CommandHandler {
+public class BotCommandHandler implements CommandHandler {
 
     private OmemoController omemoController;
     private final ConfigReader configReader;
@@ -61,8 +61,8 @@ public class BotCommandHandler extends CommandHandler {
                 return;
             }
             try {
-                String message = cmd.substring(cmd.indexOf(" ")).trim();
-                message = message.substring(message.indexOf(" ")).trim();
+                String message = cmd.substring(cmd.indexOf(' ')).trim();
+                message = message.substring(message.indexOf(' ')).trim();
                 this.omemoController.sendMessage(cmdArr[1], message);
             } catch (Exception ex) {
                 System.out.println("Failed to send message.");

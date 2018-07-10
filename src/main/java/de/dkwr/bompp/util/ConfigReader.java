@@ -65,13 +65,13 @@ public class ConfigReader {
     }
 
     public void loadConfigFile() throws Exception {
-        JSONParser p = new JSONParser();
         JSONParser parser = new JSONParser();
 
         if (!this.pathExists() || !this.configFileExists()) {
             throw new IllegalArgumentException("The given path of the store doesn't exists or there is no config file in the store: " + this.configFilePath);
         }
         try {
+            System.out.println(this.configFilePath);
             Object obj = parser.parse(new FileReader(this.configFilePath));
 
             JSONObject jsonConfig = (JSONObject) obj;
@@ -163,10 +163,7 @@ public class ConfigReader {
 
     private boolean configFileExists() {
         File f = new File(this.configFilePath);
-        if (f.exists()) {
-            return true;
-        }
-        return false;
+        return f.exists();
     }
     
     private char[] readPasswordFromConsole() {
@@ -176,8 +173,6 @@ public class ConfigReader {
                     + "If you are running from an IDE you should set your password in the config file and remove it later.");
             System.exit(1);
         }
-        char[] password = console.readPassword("Enter password for server JID:\n");
-        
-        return password;
+        return console.readPassword("Enter password for server JID:\n");
     }
 }
