@@ -65,7 +65,6 @@ public class ConfigReader {
     }
 
     public void loadConfigFile() throws Exception {
-        JSONParser p = new JSONParser();
         JSONParser parser = new JSONParser();
 
         if (!this.pathExists() || !this.configFileExists()) {
