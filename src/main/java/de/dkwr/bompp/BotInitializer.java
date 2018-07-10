@@ -100,6 +100,8 @@ public class BotInitializer {
             System.out.println("OMEMO setup complete and BoMPP started!");
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
+            System.out.println("Connection failed. Is your password ok?\nQuit.");
+            System.exit(-1);
         }
     }
     
