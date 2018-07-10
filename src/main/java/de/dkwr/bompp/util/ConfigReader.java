@@ -162,10 +162,7 @@ public class ConfigReader {
 
     private boolean configFileExists() {
         File f = new File(this.configFilePath);
-        if (f.exists()) {
-            return true;
-        }
-        return false;
+        return f.exists();
     }
     
     private char[] readPasswordFromConsole() {

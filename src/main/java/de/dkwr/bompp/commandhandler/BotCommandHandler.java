@@ -61,8 +61,8 @@ public class BotCommandHandler implements CommandHandler {
                 return;
             }
             try {
-                String message = cmd.substring(cmd.indexOf(" ")).trim();
-                message = message.substring(message.indexOf(" ")).trim();
+                String message = cmd.substring(cmd.indexOf(' ')).trim();
+                message = message.substring(message.indexOf(' ')).trim();
                 this.omemoController.sendMessage(cmdArr[1], message);
             } catch (Exception ex) {
                 System.out.println("Failed to send message.");
