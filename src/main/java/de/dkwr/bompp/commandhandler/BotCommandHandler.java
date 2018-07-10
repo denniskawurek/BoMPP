@@ -31,7 +31,7 @@ import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
  *
  * @author Dennis Kawurek
  */
-public class BotCommandHandler extends CommandHandler {
+public class BotCommandHandler implements CommandHandler {
 
     private OmemoController omemoController;
     private final ConfigReader configReader;

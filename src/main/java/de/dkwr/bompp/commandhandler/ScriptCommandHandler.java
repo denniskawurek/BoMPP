@@ -30,7 +30,7 @@ import de.dkwr.bompp.util.CommandList;
  *
  * @author Dennis Kawurek
  */
-public class ScriptCommandHandler extends CommandHandler {
+public class ScriptCommandHandler implements CommandHandler {
 
     private OmemoController omemoController;
     private final CommandList commandList;
