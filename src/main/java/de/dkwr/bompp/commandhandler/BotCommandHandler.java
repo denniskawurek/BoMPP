@@ -115,6 +115,10 @@ public class BotCommandHandler implements CommandHandler {
 
         if (cmdArr[0].equalsIgnoreCase("/which")) {
             this.omemoController.printSelfJID();
+            System.out.println(
+                    "Your fingerprint: " +
+                    OmemoKeyUtil.prettyFingerprint(this.omemoController.getFingerprint())
+            );
             return;
         }
 
