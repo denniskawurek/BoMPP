@@ -71,12 +71,12 @@ public class OmemoController {
 
     /**
      * Sends a message to a JID
-     * @param jid the receiver
+     * @param recipient the receiver
      * @param message the message
      * @throws Exception when there is no connection or the encryption fails
      */
-    public void sendMessage(String jid, String message) throws Exception {
-        BareJid recipient = getJid(jid);
+    public void sendMessage(BareJid recipient, String message) throws Exception {
+        //BareJid recipient = getJid(jid);
         if (recipient != null) {
             Message encrypted = null;
             try {
@@ -248,7 +248,7 @@ public class OmemoController {
         this.connection.disconnect(new Presence(Presence.Type.unavailable, "You are still connected.", 100, Presence.Mode.away));
     }
 
-    private BareJid getJid(String user) {
+    public BareJid getJid(String user) {
         RosterEntry r = null;
         for (RosterEntry s : this.roster.getEntries()) {
             if (s.getName() != null && s.getName().equals(user)) {

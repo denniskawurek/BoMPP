@@ -68,7 +68,7 @@ public class ExecuteScriptThread implements Runnable {
 
             if(this.clientJID != null) {
                 System.out.println("End of execution of " + paramList.get(0) + " for " + clientJID + " Exit code: " + exec.exitValue());
-                this.omemoController.sendMessage(this.clientJID, strBuilder.toString());
+                this.omemoController.sendMessage(this.omemoController.getJid(this.clientJID), strBuilder.toString());
             } else {
                 System.out.println("End of execution of " + paramList.get(0) + " Exit code: " + exec.exitValue());
             }
@@ -76,7 +76,7 @@ public class ExecuteScriptThread implements Runnable {
             BotLogger.getInstance().logException(ex);
             if(this.clientJID != null) {
                 try {
-                    this.omemoController.sendMessage(this.clientJID, "Failed to execute the command " + paramList.get(0) + "\nPlease try it again.");
+                    this.omemoController.sendMessage(this.omemoController.getJid(this.clientJID), "Failed to execute the command " + paramList.get(0) + "\nPlease try it again.");
                 } catch (Exception e) {
                     BotLogger.getInstance().logException(e);
                 }

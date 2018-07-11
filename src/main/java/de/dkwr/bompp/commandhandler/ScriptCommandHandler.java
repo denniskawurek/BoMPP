@@ -81,10 +81,10 @@ public class ScriptCommandHandler implements CommandHandler {
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
-                this.omemoController.sendMessage(clientJID,  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
+                this.omemoController.sendMessage(this.omemoController.getJid(clientJID),  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             } else {
-                this.omemoController.sendMessage(clientJID, "This command doesn't exist.");
-                this.omemoController.sendMessage(clientJID, this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
+                this.omemoController.sendMessage(this.omemoController.getJid(clientJID), "This command doesn't exist.");
+                this.omemoController.sendMessage(this.omemoController.getJid(clientJID), this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             }
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
