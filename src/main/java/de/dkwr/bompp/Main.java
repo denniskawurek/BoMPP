@@ -1,8 +1,8 @@
 package de.dkwr.bompp;
 
-import de.dkwr.bompp.commandexecutor.CommandQueue;
-import de.dkwr.bompp.commandhandler.BotCommandHandler;
-import de.dkwr.bompp.commandhandler.CommandHandler;
+import de.dkwr.bompp.cmd.exec.CommandQueue;
+import de.dkwr.bompp.cmd.handler.BotCommandHandler;
+import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.BotConfiguration;

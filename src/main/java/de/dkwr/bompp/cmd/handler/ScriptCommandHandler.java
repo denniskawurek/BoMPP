@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.dkwr.bompp.commandhandler;
+package de.dkwr.bompp.cmd.handler;
 
-import de.dkwr.bompp.commandexecutor.CommandQueue;
-import de.dkwr.bompp.commandexecutor.ExecuteScriptThread;
+import de.dkwr.bompp.cmd.exec.CommandQueue;
+import de.dkwr.bompp.cmd.exec.ExecuteScriptThread;
 import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.CommandList;

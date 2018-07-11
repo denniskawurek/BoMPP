@@ -16,7 +16,7 @@
  */
 package de.dkwr.bompp;
 
-import de.dkwr.bompp.commandhandler.CommandHandler;
+import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.util.StaticScanner;
 import java.util.Scanner;
 

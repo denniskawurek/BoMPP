@@ -16,15 +16,14 @@
  */
 package de.dkwr.bompp;
 
-import de.dkwr.bompp.commandexecutor.CommandQueue;
-import de.dkwr.bompp.commandhandler.CommandHandler;
-import de.dkwr.bompp.commandhandler.ScriptCommandHandler;
+import de.dkwr.bompp.cmd.exec.CommandQueue;
+import de.dkwr.bompp.cmd.handler.CommandHandler;
+import de.dkwr.bompp.cmd.handler.ScriptCommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.MessageListener;
 import de.dkwr.bompp.omemo.OmemoController;
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackConfiguration;

@@ -16,7 +16,7 @@
  */
 package de.dkwr.bompp.omemo;
 
-import de.dkwr.bompp.commandhandler.CommandHandler;
+import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
 import org.jivesoftware.smack.chat2.Chat;
