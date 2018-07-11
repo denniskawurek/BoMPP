@@ -45,18 +45,12 @@ public class BotLogger {
         super();
     }
 
-    public static void logException(Exception ex, String msg) {
-        System.out.println(msg);
-    }
-
     public synchronized void logMsg(String msg) {
         String dateStr = currentTimeStr();
         try (FileWriter fw = new FileWriter(cfg.getStorePath() + logFileName, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
             printWriter.println(dateStr + "" + msg);
-            bw.close();
-            printWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(BotLogger.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -70,8 +64,6 @@ public class BotLogger {
                 PrintWriter printWriter = new PrintWriter(bw)) {
             printWriter.println(dateStr + "Stacktrace:");
             exception.printStackTrace(printWriter);
-            bw.close();
-            printWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(BotLogger.class.getName()).log(Level.SEVERE, null, ex);
         }
