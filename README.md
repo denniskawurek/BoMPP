@@ -24,7 +24,7 @@ java -jar bompp.jar -p STOREPATH
 
 ### From source
 
-Take a look in to the [wiki](https://github.com/denniskawurek/BoMPP/wiki/Setup-from-Source)
+Take a look into the [wiki](https://github.com/denniskawurek/BoMPP/wiki/Setup-from-Source)
 
 ## Encryption
 Fortunately Smack has [Omemo](https://github.com/igniterealtime/Smack/blob/master/documentation/extensions/omemo.md) integrated which is an implementation of the Signal Protocol.
