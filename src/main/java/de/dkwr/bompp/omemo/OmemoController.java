@@ -247,7 +247,11 @@ public class OmemoController {
     public void closeConnection() throws Exception {
         this.connection.disconnect(new Presence(Presence.Type.unavailable, "You are still connected.", 100, Presence.Mode.away));
     }
-
+    
+    public Roster getRoster() {
+        return this.roster;
+    }
+    
     public BareJid getJid(String user) {
         RosterEntry r = null;
         for (RosterEntry s : this.roster.getEntries()) {

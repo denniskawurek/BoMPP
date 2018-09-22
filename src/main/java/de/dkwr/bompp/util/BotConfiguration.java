@@ -36,6 +36,7 @@ public class BotConfiguration {
     private boolean enableXMPPDebugMode = false;
     private String adminJID;
     private Boolean listenOnlyAdmin;
+    private Boolean notifyAdminOnStartup;
 
     private BotConfiguration() {
         super();
@@ -82,6 +83,10 @@ public class BotConfiguration {
     public void setListenOnlyAdmin(Boolean listenOnlyAdmin) {
         this.listenOnlyAdmin = listenOnlyAdmin;
     }
+    
+    public void setNotifyAdminOnStartup(Boolean notifyAdminOnStartup) {
+        this.notifyAdminOnStartup = notifyAdminOnStartup;
+    }
 
     public String getJID() {
         return this.jid;
@@ -117,6 +122,10 @@ public class BotConfiguration {
     
     public boolean getListenOnlyAdmin() {
         return this.listenOnlyAdmin;
+    }
+    
+    public boolean getNotifyAdminOnStartup() {
+        return this.notifyAdminOnStartup;
     }
 
     /**
