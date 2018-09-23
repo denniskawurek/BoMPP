@@ -21,26 +21,34 @@ import de.dkwr.bompp.util.StaticScanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smackx.omemo.OmemoFingerprint;
 import org.jivesoftware.smackx.omemo.OmemoManager;
+import org.jivesoftware.smackx.omemo.OmemoMessage;
+import org.jivesoftware.smackx.omemo.OmemoMessage.Sent;
+import org.jivesoftware.smackx.omemo.OmemoStore;
 import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
+import org.jivesoftware.smackx.omemo.exceptions.CorruptedOmemoKeyException;
 import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
-import org.jivesoftware.smackx.omemo.internal.CachedDeviceList;
+import org.jivesoftware.smackx.omemo.internal.OmemoCachedDeviceList;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
-import org.jivesoftware.smackx.omemo.signal.SignalOmemoSession;
+import org.jivesoftware.smackx.omemo.trust.OmemoFingerprint;
+import org.jivesoftware.smackx.omemo.trust.OmemoTrustCallback;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.whispersystems.libsignal.IdentityKey;
+import org.whispersystems.libsignal.state.SessionRecord;
 
 /**
  * The OmemoController provides methods to control Omemo specicific settings.
@@ -48,7 +56,7 @@ import org.whispersystems.libsignal.IdentityKey;
  */
 public class OmemoController {
     private final OmemoManager omemoManager;
-    private final SignalFileBasedOmemoStore omemoStore;
+    private final OmemoStore omemoStore;
     private final AbstractXMPPConnection connection;
     private final ChatManager chatManager;
     private final Roster roster;
@@ -61,7 +69,7 @@ public class OmemoController {
      * @param roster The Roster associated with the session
      * @param chatManager The ChatManager used to send messages
      */
-    public OmemoController(AbstractXMPPConnection connection, OmemoManager omemoManager, SignalFileBasedOmemoStore omemoStore, Roster roster, ChatManager chatManager) {
+    public OmemoController(AbstractXMPPConnection connection, OmemoManager omemoManager, OmemoStore omemoStore, Roster roster, ChatManager chatManager) {
         this.omemoManager = omemoManager;
         this.omemoStore = omemoStore;
         this.connection = connection;
@@ -77,28 +85,30 @@ public class OmemoController {
      */
     public void sendMessage(BareJid recipient, String message) throws Exception {
         //BareJid recipient = getJid(jid);
-        if (recipient != null) {
+        /**if (recipient != null) {
             Message encrypted = null;
             try {
-                encrypted = omemoManager.encrypt(recipient, message.trim());
+                encrypted = omemoManager.encrypt(recipient, message.trim()).asMessage(recipient);
             } catch (UndecidedOmemoIdentityException e) {
                 System.out.println("There are undecided identities:");
-                for (OmemoDevice d : e.getUntrustedDevices()) {
+                for (OmemoDevice d : e.getUndecidedDevices()) {
                     System.out.println(d.toString());
                     OmemoDevice device = new OmemoDevice(d.getJid(), d.getDeviceId());
                     OmemoFingerprint fp = omemoManager.getFingerprint(device);
                     System.out.println(fp.toString());
                 }
                 System.out.println("Call /trust to trust these identites.");
-            } catch (CannotEstablishOmemoSessionException e) {
-                encrypted = omemoManager.encryptForExistingSessions(e, message);
             }
             if (encrypted != null) {
                 System.out.println("Replying to " + recipient.toString() + ": " + message);
                 Chat current = this.chatManager.chatWith(recipient.asEntityBareJidIfPossible());
                 current.send(encrypted);
             }
-        }
+        }*/
+        String secret = "Mallory is a twerp!";
+        OmemoMessage.Sent encrypted = this.omemoManager.encrypt(recipient, message);
+        Message msg = encrypted.asMessage(recipient);
+        this.connection.sendStanza(msg);
     }
     
     /**
@@ -107,7 +117,7 @@ public class OmemoController {
      * @throws Exception when the device list request fails.
      */
     public void listAll(String jidStr) throws Exception {
-        if (jidStr == null) {
+        /**if (jidStr == null) {
             for (RosterEntry r : roster.getEntries()) {
                 System.out.println(r.getName() + " (" + r.getJid() + ") Can I see? " + r.canSeeHisPresence() + ". Can they see? " + r.canSeeMyPresence() + ". Online? " + roster.getPresence(r.getJid()).isAvailable());
             }
@@ -116,15 +126,19 @@ public class OmemoController {
             try {
                 List<Presence> presences = roster.getAllPresences(jid);
                 for (Presence p : presences) {
-                    System.out.println(p.getFrom() + " " + omemoManager.resourceSupportsOmemo(p.getFrom().asDomainFullJidIfPossible()));
+                    System.out.println(p.getFrom() + " " + omemoManager.contactSupportsOmemo(p.getFrom().asDomainFullJidIfPossible().asBareJid()));
                 }
             } catch (Exception e) {
             }
             omemoManager.requestDeviceListUpdateFor(jid);
-            omemoManager.buildSessionsWith(jid);
-            CachedDeviceList list = omemoStore.loadCachedDeviceList(omemoManager, jid);
+            OmemoDevice contactDevice = new OmemoDevice(jid, i);
+            omemoManager.rebuildSessionWith(contactDevice);
+            //omemoManager.buildSessionsWith(jid);
+            OmemoDevice o = new OmemoDevice(jid.asBareJid());
+            OmemoCachedDeviceList list = omemoStore.loadCachedDeviceList(jid);
+            
             if (list == null) {
-                list = new CachedDeviceList();
+                list = new OmemoCachedDeviceList();
             }
             ArrayList<String> fps = new ArrayList<>();
             for (int id : list.getActiveDevices()) {
@@ -139,7 +153,7 @@ public class OmemoController {
             for (int i = 0; i < fps.size(); i++) {
                 System.out.println(i + ": " + fps.get(i));
             }
-        }
+        }**/
     }
     
     /**
@@ -147,38 +161,67 @@ public class OmemoController {
      * @param jidStr the JID to trust.
      */
     public void trustIdentities(String jidStr) {
-        try {
+        /**try {*/
             System.out.println("Usage: \n0: Untrusted, 1: Trusted, otherwise: Undecided");
             BareJid jid = getJid(jidStr);
 
             if (jid == null) {
                 return;
             }
+            
+            Set<OmemoDevice> devices = this.omemoManager.getDevicesOf(jid);
+            for(OmemoDevice dvc : devices) {
+                try {
+                    OmemoFingerprint fingerprint = this.omemoManager.getFingerprint(dvc);
+                    if (this.omemoManager.isDecidedOmemoIdentity(dvc, this.omemoManager.getFingerprint(dvc))) {
+                        if(this.omemoManager.isTrustedOmemoIdentity(dvc, this.omemoManager.getFingerprint(dvc))) {
+                           System.out.println("Status: Trusted");
+                        } else {
+                            System.out.println("Status: Untrusted");
+                        }
+                    } else {
+                    System.out.println("Status: Undecided");
+                }
+                System.out.println(this.omemoManager.getFingerprint(dvc));
+                System.out.println("Press 0 to untrust or 1 to trust.");
+                String decision = StaticScanner.scanner.nextLine();
+                if (decision.equals("0")) {
+                    this.omemoManager.distrustOmemoIdentity(dvc, this.omemoManager.getFingerprint(dvc));
+                    System.out.println("Identity has been untrusted.");
+                } else if (decision.equals("1")) {
+                    this.omemoManager.trustOmemoIdentity(dvc, this.omemoManager.getFingerprint(dvc));
+                    System.out.println("Identity has been trusted.");
+                }
+                } catch (CannotEstablishOmemoSessionException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SmackException.NotLoggedInException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CorruptedOmemoKeyException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SmackException.NotConnectedException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SmackException.NoResponseException ex) {
+                    Logger.getLogger(OmemoController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
+            
 
-            this.omemoManager.requestDeviceListUpdateFor(jid);
-
-            CachedDeviceList l = this.omemoStore.loadCachedDeviceList(this.omemoManager, jid);
+            /**this.omemoManager.requestDeviceListUpdateFor(jid);
+            OmemoCachedDeviceList l = this.omemoStore.loadCachedDeviceList(this.omemoManager.getOwnDevice());
             Set<Integer> dvcs = l.getActiveDevices();
             for (Integer i : dvcs) {
                 if (jid.equals(this.connection.getUser().asBareJid()) || i == this.omemoManager.getDeviceId()) {
                     continue;
                 }
-
+                
                 OmemoDevice d = new OmemoDevice(jid, i);
-                SignalOmemoSession s = (SignalOmemoSession) this.omemoStore.getOmemoSessionOf(this.omemoManager, d);
-                if (s.getIdentityKey() == null) {
-                    try {
-                        System.out.println("Build session...");
-                        this.omemoManager.getFingerprint(d);
-                        s = (SignalOmemoSession) this.omemoStore.getOmemoSessionOf(this.omemoManager, d);
-                        System.out.println("Session built.");
-                    } catch (CannotEstablishOmemoSessionException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                }
-                if (this.omemoStore.isDecidedOmemoIdentity(this.omemoManager, d, s.getIdentityKey())) {
-                    if (this.omemoStore.isTrustedOmemoIdentity(this.omemoManager, d, s.getIdentityKey())) {
+                SessionRecord s = (SessionRecord) this.omemoStore.loadRawSession(this.omemoManager.getOwnDevice(), d);
+                
+                if (this.omemoManager.isDecidedOmemoIdentity(d, this.omemoManager.getFingerprint(d))) {
+                    
+                    if (this.omemoManager.isTrustedOmemoIdentity(d, this.omemoManager.getFingerprint(d))) {
                         System.out.println("Status: Trusted");
                     } else {
                         System.out.println("Status: Untrusted");
@@ -186,21 +229,21 @@ public class OmemoController {
                 } else {
                     System.out.println("Status: Undecided");
                 }
-                System.out.println(OmemoKeyUtil.prettyFingerprint(s.getFingerprint()));
+                System.out.println(this.omemoManager.getFingerprint(d));
                 System.out.println("Press 0 to untrust or 1 to trust.");
                 String decision = StaticScanner.scanner.nextLine();
                 if (decision.equals("0")) {
-                    this.omemoStore.distrustOmemoIdentity(this.omemoManager, d, s.getIdentityKey());
+                    this.omemoManager.distrustOmemoIdentity(d, this.omemoManager.getFingerprint(d));
                     System.out.println("Identity has been untrusted.");
                 } else if (decision.equals("1")) {
-                    this.omemoStore.trustOmemoIdentity(this.omemoManager, d, s.getIdentityKey());
+                    this.omemoManager.trustOmemoIdentity(d, this.omemoManager.getFingerprint(d));
                     System.out.println("Identity has been trusted.");
                 }
 
             }
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
-        }
+        }*/
     }
     
     /**
@@ -208,7 +251,7 @@ public class OmemoController {
      */
     public void clearDeviceList() {
         try {
-            omemoManager.purgeDevices();
+            omemoManager.purgeDeviceList();
         } catch (Exception ex) {
            BotLogger.getInstance().logException(ex);
         }
@@ -219,24 +262,26 @@ public class OmemoController {
      * @throws Exception when creating keys fails.
      */
     public void regenerateKeys() throws Exception {
-        this.omemoManager.regenerate();
+        //this.omemoManager.regenerate();
     }
     
     /**
      * Returns the fingerprint of the bot.
      * @return the fingerprint
      */
-    public OmemoFingerprint getFingerprint() {
-        return this.omemoManager.getOurFingerprint();
+    public OmemoFingerprint getFingerprint() throws Exception {
+        return this.omemoManager.getOwnFingerprint();
     }
     
     /**
      * Prints the JID and device Id of the bot.
      */
     public void printSelfJID() {
+        String ownDeviceId = this.omemoManager.getDeviceId().toString();
+        String ownJid = this.omemoManager.getOwnJid().toString();
         System.out.println(
-                "JID: " + this.omemoManager.getOwnJid() + "\n"
-                        + "DeviceId: " + this.omemoManager.getDeviceId()
+                "JID: " + ownJid + "\n"
+                        + "DeviceId: " + ownDeviceId
         );
     }
     
