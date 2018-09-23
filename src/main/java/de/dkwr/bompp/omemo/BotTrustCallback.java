@@ -16,7 +16,14 @@
  */
 package de.dkwr.bompp.omemo;
 
+import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.trust.OmemoFingerprint;
@@ -24,43 +31,80 @@ import org.jivesoftware.smackx.omemo.trust.OmemoTrustCallback;
 import org.jivesoftware.smackx.omemo.trust.TrustState;
 
 /**
- *
+ * Implements the OmemoTrustCallback for storing trusted/untrusted fingerprints.
  * @author Dennis Kawurek
  */
 public class BotTrustCallback implements OmemoTrustCallback {
-    HashMap<OmemoDevice, HashMap<String, TrustState>> trustMap = new HashMap<>();
-    private static final BotTrustCallback instance = new BotTrustCallback();
-     private final HashMap<OmemoDevice, HashMap<OmemoFingerprint, TrustState>> trustStates = new HashMap<>();
     
+    private static BotTrustCallback instance;
+    private HashMap<Integer, HashMap<String, TrustState>> trustStates;
+    private static final String SERIALIZE_FILE = BotConfiguration.getInstance().getTrustedStatesFilePath();
+    
+    public BotTrustCallback() {
+        this.trustStates = deserialize();
+        instance = this;
+        System.out.println(BotConfiguration.getInstance().getTrustedStatesFilePath());
+    }
+
     @Override
-    public TrustState getTrust(OmemoDevice od, OmemoFingerprint of) {
-        HashMap<OmemoFingerprint, TrustState> states = trustStates.get(od);
-
+    public TrustState getTrust(OmemoDevice device, OmemoFingerprint fingerprint) {
+        HashMap<String, TrustState> states = trustStates.get(device.getDeviceId());
         if (states != null) {
-            TrustState state = states.get(of);
-
+            TrustState state = states.get(fingerprint.blocksOf8Chars());
             if (state != null) {
                 return state;
             }
         }
-
-return TrustState.undecided;
+        return TrustState.undecided;
     }
 
     @Override
-    public void setTrust(OmemoDevice od, OmemoFingerprint of, TrustState ts) {
-        HashMap<OmemoFingerprint, TrustState> states = trustStates.get(od);
-
+    public void setTrust(OmemoDevice device, OmemoFingerprint fingerprint, TrustState truststate) {
+        HashMap<String, TrustState> states = trustStates.get(device.getDeviceId());
         if (states == null) {
             states = new HashMap<>();
-            trustStates.put(od, states);
+            trustStates.put(device.getDeviceId(), states);
         }
-
-states.put(of, ts);
+        states.put(fingerprint.blocksOf8Chars(), truststate);
+        serialize();
     }
-    
+
     public static BotTrustCallback getInstance() {
         return instance;
     }
     
+    private void serialize() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(SERIALIZE_FILE);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.trustStates);
+            out.close();
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            BotLogger.getInstance().logException(ex);
+        } catch (IOException ex) {
+            BotLogger.getInstance().logException(ex);
+        }
+    }
+    
+    private static HashMap deserialize() {
+        try {
+            FileInputStream fileIn = new FileInputStream(SERIALIZE_FILE);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object readObj = in.readObject();
+            if(readObj == null)
+                return new HashMap<>();
+            else
+                return (HashMap) readObj;
+            
+        } catch (FileNotFoundException f) {
+            return new HashMap<>();
+        } catch (ClassNotFoundException c) {
+            BotLogger.getInstance().logMsg("Class not found in method deserialize() in BotTrustCallback.");
+            BotLogger.getInstance().logException(c);
+        } catch (IOException ex) {
+            BotLogger.getInstance().logException(ex);
+        }
+        return new HashMap<>();
+    }
 }

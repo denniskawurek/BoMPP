@@ -75,11 +75,10 @@ public class BotInitializer {
             this.connection = new XMPPTCPConnection(jid, new String(pwd));
             SignalOmemoService.acknowledgeLicense();
             SignalOmemoService.setup();
-            //OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(new File(path));
             SignalOmemoService service = (SignalOmemoService) SignalOmemoService.getInstance();
             service.setOmemoStoreBackend(new SignalCachingOmemoStore(new SignalFileBasedOmemoStore(new File(path))));
             this.omemoManager = OmemoManager.getInstanceFor(connection);
-            this.omemoManager.setTrustCallback(BotTrustCallback.getInstance());
+            this.omemoManager.setTrustCallback(new BotTrustCallback());
             this.omemoStore = OmemoService.getInstance().getOmemoStoreBackend();
             this.connection.setReplyTimeout(10000);
             this.connection = connection.connect();
