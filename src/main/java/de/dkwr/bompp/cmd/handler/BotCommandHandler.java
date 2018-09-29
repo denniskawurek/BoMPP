@@ -23,6 +23,7 @@ import de.dkwr.bompp.util.CommandList;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
+import org.jxmpp.jid.BareJid;
 
 /**
  * The BotCommandHandler handles all operations which are only available for the
@@ -37,12 +38,14 @@ public class BotCommandHandler implements CommandHandler {
     private final ConfigReader configReader;
     private final CommandQueue commandQueue;
     private CommandHandler scriptCommandHandler;
+    private final BareJid adminJID;
 
-    public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler) {
+    public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler, BareJid adminJID) {
         this.omemoController = omemoController;
         this.configReader = configReader;
         this.commandQueue = commandQueue;
         this.scriptCommandHandler = scriptCommandHandler;
+        this.adminJID = adminJID;
     }
 
     @Override
@@ -89,6 +92,11 @@ public class BotCommandHandler implements CommandHandler {
                 return;
             }
             this.omemoController.trustIdentities(cmdArr[1]);
+            /**try {
+                this.omemoController.getRoster().createEntry(this.omemoController.getJid(cmdArr[0]), cmdArr[0], new String[] {"trusted"});
+            } catch (SmackException.NotLoggedInException ex) {
+                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
             return;
         }
 
@@ -192,5 +200,14 @@ public class BotCommandHandler implements CommandHandler {
     @Override
     public void setOmemoController(OmemoController omemoController) {
         this.omemoController = omemoController;
+    }
+    
+    public void sendAdminMessage(String message) {
+        try {
+            this.omemoController.sendMessage(this.adminJID, message);
+        } catch (Exception ex) {
+            System.out.println("Failed to send message to Admin.");
+            BotLogger.getInstance().logException(ex);
+        }
     }
 }

@@ -65,6 +65,7 @@ public class BotInitializer {
      */
     public void init(String jid, char[] pwd, String path, CommandQueue commandQueue, boolean enableXMPPDebugMode) {
         try {
+            System.out.println("Start initializing BoMPP please wait...");
             SmackConfiguration.DEBUG = enableXMPPDebugMode;
             OmemoConfiguration.setAddOmemoHintBody(false);
 
@@ -75,7 +76,7 @@ public class BotInitializer {
             
             this.omemoManager = OmemoManager.getInstanceFor(connection);
             this.omemoStore = (SignalFileBasedOmemoStore) OmemoService.getInstance().getOmemoStoreBackend();
-            this.connection.setPacketReplyTimeout(10000);
+            this.connection.setReplyTimeout(10000);
             this.connection = connection.connect();
             this.connection.login();
 

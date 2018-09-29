@@ -2,10 +2,10 @@ package de.dkwr.bompp;
 
 import de.dkwr.bompp.cmd.exec.CommandQueue;
 import de.dkwr.bompp.cmd.handler.BotCommandHandler;
-import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.BotConfiguration;
+import org.jxmpp.jid.BareJid;
 
 /**
  * Main class and entry point for the bot.
@@ -28,8 +28,13 @@ public class Main {
             BotInitializer botInitializer = new BotInitializer();
             botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, commandQueue, cfg.getEnableXMPPDebugMode());
             cfg.clearPassword();
-
-            CommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue, botInitializer.getScriptCommandHandler());
+            
+            BareJid adminJID = botInitializer.getOmemoController().getJid(cfg.getAdminJID());
+            BotCommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue, botInitializer.getScriptCommandHandler(), adminJID);
+            
+            if(cfg.getNotifyAdminOnStartup())
+                botCommandHandler.sendAdminMessage("Bot started!");
+            
             new BotControlThread(botCommandHandler).run();
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
@@ -38,6 +43,7 @@ public class Main {
 
     private static String getStoragePath(String[] args) {
         if (args.length < 2) {
+            System.out.println("<");
             printHelp();
             System.exit(0);
         } else if (args.length >= 1) { // if storePath is or is not initialized take args
@@ -47,6 +53,7 @@ public class Main {
                 }
             }
         } else {
+            System.out.println("<");
             printHelp();
             System.exit(0);
         }

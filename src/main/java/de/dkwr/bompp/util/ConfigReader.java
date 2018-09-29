@@ -51,6 +51,7 @@ public class ConfigReader {
     private final String EXEC_TYPE_KEY = "exec_type";
     private final String SCRIPT_KEY = "script";
     private final String ENABLE_XMPP_DEBUG = "enable_xmpp_debug";
+    private final String NOTIFY_ADMIN_ON_STARTUP = "notify_admin_on_startup";
 
     /**
      * Creates an object of the ConfigReader and reads the config file.
@@ -90,6 +91,7 @@ public class ConfigReader {
             cfg.setQueueSize(Integer.parseInt((String) botConfig.get(this.QUEUE_SIZE_KEY)));
             cfg.setAdminJID((String) botConfig.get(this.ADMIN_JID_KEY));
             cfg.setListenOnlyAdmin((Boolean) botConfig.get(this.LISTEN_ONLY_ADMIN_KEY));
+            cfg.setNotifyAdminOnStartup((Boolean) botConfig.get(this.NOTIFY_ADMIN_ON_STARTUP));
             
             if(botConfig.get(this.PWD_KEY) != null) {
                 cfg.setPassword(((String) botConfig.get(this.PWD_KEY)).toCharArray());
@@ -139,14 +141,15 @@ public class ConfigReader {
                 || botConfig.get(this.MAX_THREADS_KEY) == null
                 || botConfig.get(this.QUEUE_SIZE_KEY) == null
                 || botConfig.get(this.ADMIN_JID_KEY) == null
-                || botConfig.get(this.LISTEN_ONLY_ADMIN_KEY) == null) {
-            throw new IllegalArgumentException("Error while loading the config file." +
+                || botConfig.get(this.LISTEN_ONLY_ADMIN_KEY) == null
+                || botConfig.get(this.NOTIFY_ADMIN_ON_STARTUP) == null) {
+            throw new IllegalArgumentException("Error while loading the config file. " +
                     "Please take a look at the documentation to see which fields are required.");
         }
         
         // if there is a password in the config file set, print a hint.
         if(botConfig.get(this.PWD_KEY) != null) {
-            System.out.println("\u001B[33mWarning: You set a password in your config file, which is a security risk.\n"
+            System.out.println("\u001B[33mWarning: You've set a password in your config file, which is a security risk.\n"
                     + "If possible you should remove the field from your config and use the command line instead.\u001B[0m");
         }
     }
