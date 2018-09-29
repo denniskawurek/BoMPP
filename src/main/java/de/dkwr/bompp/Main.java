@@ -31,9 +31,11 @@ public class Main {
             
             BareJid adminJID = botInitializer.getOmemoController().getJid(cfg.getAdminJID());
             BotCommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue, botInitializer.getScriptCommandHandler(), adminJID);
-            new BotControlThread(botCommandHandler).run();
+            
             if(cfg.getNotifyAdminOnStartup())
                 botCommandHandler.sendAdminMessage("Bot started!");
+            
+            new BotControlThread(botCommandHandler).run();
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
