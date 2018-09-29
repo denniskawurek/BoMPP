@@ -34,6 +34,7 @@ public class ConfigReader {
 
     private final String storePath;
     private final String configName = "config.json";
+    private final String trustedStatesFileName = "trustStates";
     private final String configFilePath;
     private final CommandList cmdList;
 
@@ -92,6 +93,7 @@ public class ConfigReader {
             cfg.setAdminJID((String) botConfig.get(this.ADMIN_JID_KEY));
             cfg.setListenOnlyAdmin((Boolean) botConfig.get(this.LISTEN_ONLY_ADMIN_KEY));
             cfg.setNotifyAdminOnStartup((Boolean) botConfig.get(this.NOTIFY_ADMIN_ON_STARTUP));
+            cfg.setTrustedStatesFilePath(this.storePath + this.trustedStatesFileName);
             
             if(botConfig.get(this.PWD_KEY) != null) {
                 cfg.setPassword(((String) botConfig.get(this.PWD_KEY)).toCharArray());

@@ -19,6 +19,7 @@ package de.dkwr.bompp;
 import de.dkwr.bompp.cmd.exec.CommandQueue;
 import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.cmd.handler.ScriptCommandHandler;
+import de.dkwr.bompp.omemo.BotTrustCallback;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.omemo.MessageListener;
 import de.dkwr.bompp.omemo.OmemoController;
@@ -34,8 +35,10 @@ import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.omemo.OmemoConfiguration;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.OmemoService;
+import org.jivesoftware.smackx.omemo.OmemoStore;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
+import org.jivesoftware.smackx.omemo.signal.SignalCachingOmemoStore;
 import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
 import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
 
@@ -46,7 +49,7 @@ import org.jivesoftware.smackx.omemo.signal.SignalOmemoService;
 public class BotInitializer {
     private AbstractXMPPConnection connection;
     private OmemoManager omemoManager;
-    private SignalFileBasedOmemoStore omemoStore;
+    private OmemoStore omemoStore;
     private OmemoMessageListener omemoMessageListener;
     private OmemoMucMessageListener omemoMucMessageListener;
     private OmemoController omemoController;
@@ -72,13 +75,15 @@ public class BotInitializer {
             this.connection = new XMPPTCPConnection(jid, new String(pwd));
             SignalOmemoService.acknowledgeLicense();
             SignalOmemoService.setup();
-            OmemoConfiguration.setFileBasedOmemoStoreDefaultPath(new File(path));
-            
+            SignalOmemoService service = (SignalOmemoService) SignalOmemoService.getInstance();
+            service.setOmemoStoreBackend(new SignalCachingOmemoStore(new SignalFileBasedOmemoStore(new File(path))));
             this.omemoManager = OmemoManager.getInstanceFor(connection);
-            this.omemoStore = (SignalFileBasedOmemoStore) OmemoService.getInstance().getOmemoStoreBackend();
+            this.omemoManager.setTrustCallback(new BotTrustCallback());
+            this.omemoStore = OmemoService.getInstance().getOmemoStoreBackend();
             this.connection.setReplyTimeout(10000);
             this.connection = connection.connect();
             this.connection.login();
+            this.omemoManager.initialize();
 
             CarbonManager.getInstanceFor(connection).enableCarbons();
 

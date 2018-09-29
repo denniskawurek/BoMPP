@@ -37,6 +37,7 @@ public class BotConfiguration {
     private String adminJID;
     private Boolean listenOnlyAdmin;
     private Boolean notifyAdminOnStartup;
+    private String trustedStatesFilePath;
 
     private BotConfiguration() {
         super();
@@ -87,6 +88,10 @@ public class BotConfiguration {
     public void setNotifyAdminOnStartup(Boolean notifyAdminOnStartup) {
         this.notifyAdminOnStartup = notifyAdminOnStartup;
     }
+    
+    public void setTrustedStatesFilePath(String trustedStatesFilePath) {
+        this.trustedStatesFilePath = trustedStatesFilePath;
+    }
 
     public String getJID() {
         return this.jid;
@@ -127,7 +132,11 @@ public class BotConfiguration {
     public boolean getNotifyAdminOnStartup() {
         return this.notifyAdminOnStartup;
     }
-
+    
+    public String getTrustedStatesFilePath() {
+        return this.trustedStatesFilePath;
+    }
+    
     /**
      * Overwrite password array.\n
      * This should be called after initializing the bot (as it is intendend to

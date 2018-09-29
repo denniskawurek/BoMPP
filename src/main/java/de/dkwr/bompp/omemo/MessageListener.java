@@ -22,9 +22,12 @@ import de.dkwr.bompp.util.BotLogger;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.omemo.OmemoMessage;
 import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
-import org.jivesoftware.smackx.omemo.internal.OmemoMessageInformation;
+import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
 import org.jxmpp.jid.BareJid;
@@ -51,8 +54,11 @@ public class MessageListener {
     public OmemoMessageListener setupOmemoMessageListener() {
         return new OmemoMessageListener() {
             @Override
-            public void onOmemoMessageReceived(String decryptedBody, Message encryptedMessage, Message wrappingMessage, OmemoMessageInformation omemoInformation) {
-                BareJid sender = encryptedMessage.getFrom().asBareJid();
+            public void onOmemoMessageReceived(Stanza stanza, OmemoMessage.Received rcvd) {
+                //BareJid sender = encryptedMessage.getFrom().asBareJid();
+                OmemoDevice senderDevice = rcvd.getSenderDevice();
+                String sender = senderDevice.getJid().asUnescapedString();
+                String decryptedBody = rcvd.getBody();
                 BotConfiguration cfg = BotConfiguration.getInstance();
                 if (sender != null && decryptedBody != null) {
                     if ((cfg.getListenOnlyAdmin() && cfg.getAdminJID().equalsIgnoreCase(sender.toString()))
@@ -68,8 +74,8 @@ public class MessageListener {
             }
 
             @Override
-            public void onOmemoKeyTransportReceived(CipherAndAuthTag cipherAndAuthTag, Message message, Message wrappingMessage, OmemoMessageInformation omemoInformation) {
-                System.out.println("KeyTransportElement received from " + message.getFrom());
+            public void onOmemoCarbonCopyReceived(CarbonExtension.Direction drctn, Message msg, Message msg1, OmemoMessage.Received rcvd) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
     }
@@ -82,15 +88,11 @@ public class MessageListener {
     public OmemoMucMessageListener setupOmemoMucMessageListener() {
         return new OmemoMucMessageListener() {
             @Override
-            public void onOmemoMucMessageReceived(MultiUserChat multiUserChat, BareJid bareJid, String s, Message message, Message message1, OmemoMessageInformation omemoMessageInformation) {
-                if (multiUserChat != null && bareJid != null && s != null) {
+            public void onOmemoMucMessageReceived(MultiUserChat muc, Stanza stanza, OmemoMessage.Received rcvd) {
+                /*if (multiUserChat != null && bareJid != null && s != null) {
                     System.out.println("\033[36m" + multiUserChat.getRoom() + ": " + bareJid + ": " + s + "\033[0m " + (omemoMessageInformation != null ? omemoMessageInformation : ""));
-                }
-            }
-
-            @Override
-            public void onOmemoKeyTransportReceived(MultiUserChat muc, BareJid from, CipherAndAuthTag cipherAndAuthTag, Message message, Message wrappingMessage, OmemoMessageInformation omemoInformation) {
-                System.out.println("KeyTransportElement received from " + muc.getRoom().asBareJid() + "/" + from);
+                }*/
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
     }

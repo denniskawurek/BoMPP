@@ -22,6 +22,8 @@ import de.dkwr.bompp.omemo.OmemoController;
 import de.dkwr.bompp.util.CommandList;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.BareJid;
 
@@ -115,19 +117,27 @@ public class BotCommandHandler implements CommandHandler {
         }
 
         if (cmdArr[0].equalsIgnoreCase("/fingerprint")) {
-            System.out.println(
-                    OmemoKeyUtil.prettyFingerprint(this.omemoController.getFingerprint())
-            );
-            return;
+            try {
+                System.out.println(
+                        this.omemoController.getFingerprint().toString()
+                );
+                return;
+            } catch (Exception ex) {
+                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         if (cmdArr[0].equalsIgnoreCase("/which")) {
-            this.omemoController.printSelfJID();
-            System.out.println(
-                    "Your fingerprint: " +
-                    OmemoKeyUtil.prettyFingerprint(this.omemoController.getFingerprint())
-            );
-            return;
+            try {
+                this.omemoController.printSelfJID();
+                System.out.println(
+                        "Your fingerprint: " +
+                                this.omemoController.getFingerprint().toString()
+                );
+                return;
+            } catch (Exception ex) {
+                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         if (cmdArr[0].equalsIgnoreCase("/reload")) {
