@@ -21,11 +21,7 @@ import de.dkwr.bompp.util.StaticScanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -33,22 +29,15 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.omemo.OmemoManager;
 import org.jivesoftware.smackx.omemo.OmemoMessage;
-import org.jivesoftware.smackx.omemo.OmemoMessage.Sent;
 import org.jivesoftware.smackx.omemo.OmemoStore;
-import org.jivesoftware.smackx.omemo.exceptions.CannotEstablishOmemoSessionException;
-import org.jivesoftware.smackx.omemo.exceptions.CorruptedOmemoKeyException;
-import org.jivesoftware.smackx.omemo.exceptions.UndecidedOmemoIdentityException;
 import org.jivesoftware.smackx.omemo.internal.OmemoCachedDeviceList;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
-import org.jivesoftware.smackx.omemo.signal.SignalFileBasedOmemoStore;
 import org.jivesoftware.smackx.omemo.trust.OmemoFingerprint;
-import org.jivesoftware.smackx.omemo.trust.OmemoTrustCallback;
 import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.whispersystems.libsignal.IdentityKey;
-import org.whispersystems.libsignal.state.SessionRecord;
 
 /**
  * The OmemoController provides methods to control Omemo specicific settings.
@@ -57,7 +46,7 @@ import org.whispersystems.libsignal.state.SessionRecord;
  * <a href="https://github.com/vanitasvitae/clocc/">CLOCC by vanitasvitae</a>
  */
 public class OmemoController {
-
+    
     private final OmemoManager omemoManager;
     private final OmemoStore omemoStore;
     private final AbstractXMPPConnection connection;
@@ -101,34 +90,54 @@ public class OmemoController {
      * @throws Exception when the device list request fails.
      */
     public void listAll(String jidStr) throws Exception {
-        /**
-         * if (jidStr == null) { for (RosterEntry r : roster.getEntries()) {
-         * System.out.println(r.getName() + " (" + r.getJid() + ") Can I see? "
-         * + r.canSeeHisPresence() + ". Can they see? " + r.canSeeMyPresence() +
-         * ". Online? " + roster.getPresence(r.getJid()).isAvailable()); } }
-         * else { BareJid jid = getJid(jidStr); try { List<Presence> presences =
-         * roster.getAllPresences(jid); for (Presence p : presences) {
-         * System.out.println(p.getFrom() + " " +
-         * omemoManager.contactSupportsOmemo(p.getFrom().asDomainFullJidIfPossible().asBareJid()));
-         * } } catch (Exception e) { }
-         * omemoManager.requestDeviceListUpdateFor(jid); OmemoDevice
-         * contactDevice = new OmemoDevice(jid, i);
-         * omemoManager.rebuildSessionWith(contactDevice);
-         * //omemoManager.buildSessionsWith(jid); OmemoDevice o = new
-         * OmemoDevice(jid.asBareJid()); OmemoCachedDeviceList list =
-         * omemoStore.loadCachedDeviceList(jid);
-         *
-         * if (list == null) { list = new OmemoCachedDeviceList(); }
-         * ArrayList<String> fps = new ArrayList<>(); for (int id :
-         * list.getActiveDevices()) { OmemoDevice d = new OmemoDevice(jid, id);
-         * IdentityKey idk = omemoStore.loadOmemoIdentityKey(omemoManager, d);
-         * if (idk == null) { System.out.println("No identityKey for " + d); }
-         * else {
-         * fps.add(OmemoKeyUtil.prettyFingerprint(omemoStore.keyUtil().getFingerprint(idk)));
-         * } } for (int i = 0; i < fps.size(); i++) { System.out.println(i + ":
-         * " + fps.get(i)); }
-        }*
-         */
+        if (jidStr == null) {
+            for (RosterEntry r : roster.getEntries()) {
+                System.out.println(r.getName() + " (" + r.getJid() + ") Can I see? "
+                        + r.canSeeHisPresence() + ". Can they see? " + r.canSeeMyPresence()
+                        + ". Online? " + roster.getPresence(r.getJid()).isAvailable());
+            }
+        } else {
+            BareJid jid = getJid(jidStr);
+            try {
+                List<Presence> presences = roster.getAllPresences(jid);
+                for (Presence p : presences) {
+                    System.out.println(p.getFrom() + " "
+                            + omemoManager.contactSupportsOmemo(p.getFrom().asDomainFullJidIfPossible().asBareJid()));
+                }
+            } catch (Exception e) {
+                BotLogger.getInstance().logException(e);
+            }
+            
+            try {
+                this.omemoManager.requestDeviceListUpdateFor(jid);
+                Set<OmemoDevice> devices = this.omemoManager.getDevicesOf(jid);
+                for (OmemoDevice contactDevice : devices) {
+                    OmemoCachedDeviceList list
+                            = omemoStore.loadCachedDeviceList(contactDevice);
+                    
+                    if (list == null) {
+                        list = new OmemoCachedDeviceList();
+                    }
+                    
+                    ArrayList<String> fps = new ArrayList<>();
+                    
+                    for (int i : list.getActiveDevices()) {
+                        OmemoDevice d = new OmemoDevice(jid, i);
+                        IdentityKey idk = (IdentityKey) this.omemoStore.loadOmemoIdentityKey(this.omemoManager.getOwnDevice(), d);
+                        if (idk == null) {
+                            System.out.println("No identityKey for " + d);
+                        } else {
+                            fps.add(idk.getFingerprint());
+                        }
+                    }
+                    for (int i = 0; i < fps.size(); i++) {
+                        System.out.println(i + ":" + fps.get(i));
+                    }
+                }
+            } catch (Exception e) {
+                BotLogger.getInstance().logException(e);
+            }
+        }
     }
 
     /**
@@ -139,11 +148,11 @@ public class OmemoController {
     public void trustIdentities(String jidStr) {
         System.out.println("Usage: \n0: Untrusted, 1: Trusted, otherwise: Undecided");
         BareJid jid = getJid(jidStr);
-
+        
         if (jid == null) {
             return;
         }
-
+        
         Set<OmemoDevice> devices = this.omemoManager.getDevicesOf(jid);
         for (OmemoDevice dvc : devices) {
             try {
@@ -222,11 +231,11 @@ public class OmemoController {
     public void closeConnection() throws Exception {
         this.connection.disconnect(new Presence(Presence.Type.unavailable, "You are still connected.", 100, Presence.Mode.away));
     }
-
+    
     public Roster getRoster() {
         return this.roster;
     }
-
+    
     public BareJid getJid(String user) {
         RosterEntry r = null;
         for (RosterEntry s : this.roster.getEntries()) {
