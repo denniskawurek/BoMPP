@@ -43,7 +43,6 @@ public class BotTrustCallback implements OmemoTrustCallback {
     public BotTrustCallback() {
         this.trustStates = deserialize();
         instance = this;
-        System.out.println(BotConfiguration.getInstance().getTrustedStatesFilePath());
     }
 
     @Override

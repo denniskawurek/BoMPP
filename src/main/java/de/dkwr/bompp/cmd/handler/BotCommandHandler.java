@@ -24,7 +24,6 @@ import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jivesoftware.smackx.omemo.util.OmemoKeyUtil;
 import org.jxmpp.jid.BareJid;
 
 /**
@@ -94,11 +93,6 @@ public class BotCommandHandler implements CommandHandler {
                 return;
             }
             this.omemoController.trustIdentities(cmdArr[1]);
-            /**try {
-                this.omemoController.getRoster().createEntry(this.omemoController.getJid(cmdArr[0]), cmdArr[0], new String[] {"trusted"});
-            } catch (SmackException.NotLoggedInException ex) {
-                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
             return;
         }
 
