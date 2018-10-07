@@ -38,7 +38,7 @@ public class BotCommandHandler implements CommandHandler {
     private OmemoController omemoController;
     private final ConfigReader configReader;
     private final CommandQueue commandQueue;
-    private CommandHandler scriptCommandHandler;
+    private final CommandHandler scriptCommandHandler;
     private final BareJid adminJID;
 
     public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler, BareJid adminJID) {

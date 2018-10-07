@@ -23,8 +23,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The ExecuteScriptThread runs a script in a Thread and notifies the client when it is terminated.

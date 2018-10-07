@@ -17,7 +17,6 @@
 package de.dkwr.bompp.util;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,10 +35,10 @@ import java.util.logging.Logger;
  */
 public class BotLogger {
 
-    private static final BotLogger instance = new BotLogger();
-    private static final BotConfiguration cfg = BotConfiguration.getInstance();
-    private static final String logFileName = ".log";
-    private static final String logDateFormat = "dd.MM. HH:mm:ss";
+    private static final BotLogger INSTANCE = new BotLogger();
+    private static final BotConfiguration CFG = BotConfiguration.getInstance();
+    private static final String LOG_FILE_NAME = ".log";
+    private static final String LOG_DATE_FORMAT = "dd.MM. HH:mm:ss";
 
     private BotLogger() {
         super();
@@ -47,7 +46,7 @@ public class BotLogger {
 
     public synchronized void logMsg(String msg) {
         String dateStr = currentTimeStr();
-        try (FileWriter fw = new FileWriter(cfg.getStorePath() + logFileName, true);
+        try (FileWriter fw = new FileWriter(CFG.getStorePath() + LOG_FILE_NAME, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
             printWriter.println(dateStr + "" + msg);
@@ -59,7 +58,7 @@ public class BotLogger {
     public synchronized void logException(Exception exception) {
         exception.printStackTrace();
         String dateStr = currentTimeStr();
-        try (FileWriter fw = new FileWriter(cfg.getStorePath() + logFileName, true);
+        try (FileWriter fw = new FileWriter(CFG.getStorePath() + LOG_FILE_NAME, true);
                 BufferedWriter bw = new BufferedWriter(fw);
                 PrintWriter printWriter = new PrintWriter(bw)) {
             printWriter.println(dateStr + "Stacktrace:");
@@ -75,12 +74,12 @@ public class BotLogger {
      * @return BotLogger instance
      */
     public static BotLogger getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     private static String currentTimeStr() {
         Date now = Calendar.getInstance().getTime();
-        Format formatter = new SimpleDateFormat(logDateFormat);
+        Format formatter = new SimpleDateFormat(LOG_DATE_FORMAT);
         return "[" + formatter.format(now) + "]: ";
     }
 }

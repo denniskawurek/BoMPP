@@ -26,11 +26,9 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.omemo.OmemoMessage;
-import org.jivesoftware.smackx.omemo.internal.CipherAndAuthTag;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
-import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 
 /**
