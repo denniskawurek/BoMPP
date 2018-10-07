@@ -27,14 +27,14 @@ import java.util.Map;
 public class CommandList {
 
     private HashMap<String, String[]> cmdMap = new HashMap<>();
-    private static final CommandList instance = new CommandList();
+    private static final CommandList INSTANCE = new CommandList();
     
     private CommandList() {
     }
     
     
     public static CommandList getInstance() {
-        return instance;
+        return INSTANCE;
     }
     
     /**

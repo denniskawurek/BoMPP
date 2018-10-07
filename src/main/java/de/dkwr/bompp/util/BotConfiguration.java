@@ -26,7 +26,7 @@ import java.util.Arrays;
  */
 public class BotConfiguration {
 
-    private static final BotConfiguration instance = new BotConfiguration();
+    private static final BotConfiguration INSTANCE = new BotConfiguration();
     private String jid;
     private char[] pwd;
     private int maxThreads;
@@ -44,7 +44,7 @@ public class BotConfiguration {
     }
 
     public static BotConfiguration getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void setJID(String jid) {

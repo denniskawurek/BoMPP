@@ -33,10 +33,10 @@ import org.json.simple.parser.JSONParser;
 public class ConfigReader {
 
     private final String storePath;
-    private final String configName = "config.json";
-    private final String trustedStatesFileName = "trustStates";
     private final String configFilePath;
     private final CommandList cmdList;
+    private final String CONFIG_NAME = "config.json";
+    private final String TRUSTED_STATES_FILE_NAME = ".trustedStates";
 
     // Config file keys
     private final String BOT_KEY = "bot";
@@ -62,7 +62,7 @@ public class ConfigReader {
      */
     public ConfigReader(String path, String fileSeparator) {
         this.storePath = path + fileSeparator;
-        this.configFilePath = this.storePath + this.configName;
+        this.configFilePath = this.storePath + this.CONFIG_NAME;
         this.cmdList = CommandList.getInstance();
     }
 
@@ -93,7 +93,7 @@ public class ConfigReader {
             cfg.setAdminJID((String) botConfig.get(this.ADMIN_JID_KEY));
             cfg.setListenOnlyAdmin((Boolean) botConfig.get(this.LISTEN_ONLY_ADMIN_KEY));
             cfg.setNotifyAdminOnStartup((Boolean) botConfig.get(this.NOTIFY_ADMIN_ON_STARTUP));
-            cfg.setTrustedStatesFilePath(this.storePath + this.trustedStatesFileName);
+            cfg.setTrustedStatesFilePath(this.storePath + this.TRUSTED_STATES_FILE_NAME);
             
             if(botConfig.get(this.PWD_KEY) != null) {
                 cfg.setPassword(((String) botConfig.get(this.PWD_KEY)).toCharArray());

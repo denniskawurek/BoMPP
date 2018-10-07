@@ -37,13 +37,12 @@ import org.jivesoftware.smackx.omemo.trust.TrustState;
 public class BotTrustCallback implements OmemoTrustCallback {
     
     private static BotTrustCallback instance;
-    private HashMap<Integer, HashMap<String, TrustState>> trustStates;
+    private final HashMap<Integer, HashMap<String, TrustState>> trustStates;
     private static final String SERIALIZE_FILE = BotConfiguration.getInstance().getTrustedStatesFilePath();
     
     public BotTrustCallback() {
         this.trustStates = deserialize();
         instance = this;
-        System.out.println(BotConfiguration.getInstance().getTrustedStatesFilePath());
     }
 
     @Override

@@ -29,7 +29,7 @@ public class BotControlThread implements Runnable {
 
     private final Scanner inputReader;
     private final CommandHandler commandHandler;
-    private final static String quitCommand = "/q";
+    private final static String QUIT_COMMAND = "/q";
     
     /**
      * Creates a new Object of the BotControlThread
@@ -50,7 +50,7 @@ public class BotControlThread implements Runnable {
                 input = inputReader.nextLine();
                 this.commandHandler.handleCommand(input);
                 
-                if(input.equalsIgnoreCase(quitCommand))
+                if(input.equalsIgnoreCase(QUIT_COMMAND))
                     return;
                 System.out.println("Input command:");
             }
