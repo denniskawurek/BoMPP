@@ -34,7 +34,7 @@ public class ConfigReader {
 
     private final String storePath;
     private final String configName = "config.json";
-    private final String trustedStatesFileName = "t";
+    private final String trustedStatesFileName = ".trustedStates";
     private final String configFilePath;
     private final CommandList cmdList;
 
