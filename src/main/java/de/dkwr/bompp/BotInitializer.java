@@ -96,7 +96,6 @@ public class BotInitializer {
             this.omemoManager.addOmemoMucMessageListener(messageListener.setupOmemoMucMessageListener());
             
             this.chatManager = ChatManager.getInstanceFor(connection);
-            this.chatManager.addIncomingListener(messageListener.setupIncomingMessageListener());
             
             this.omemoController = new OmemoController(this.connection, this.omemoManager, this.omemoStore, this.roster, this.chatManager);
             

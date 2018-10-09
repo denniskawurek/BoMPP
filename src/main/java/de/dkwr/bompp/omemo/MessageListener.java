@@ -19,8 +19,6 @@ package de.dkwr.bompp.omemo;
 import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
-import org.jivesoftware.smack.chat2.Chat;
-import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
@@ -29,7 +27,6 @@ import org.jivesoftware.smackx.omemo.OmemoMessage;
 import org.jivesoftware.smackx.omemo.internal.OmemoDevice;
 import org.jivesoftware.smackx.omemo.listener.OmemoMessageListener;
 import org.jivesoftware.smackx.omemo.listener.OmemoMucMessageListener;
-import org.jxmpp.jid.EntityBareJid;
 
 /**
  * Provides all message listeners for the bot.
@@ -53,17 +50,15 @@ public class MessageListener {
         return new OmemoMessageListener() {
             @Override
             public void onOmemoMessageReceived(Stanza stanza, OmemoMessage.Received rcvd) {
-                //BareJid sender = encryptedMessage.getFrom().asBareJid();
                 OmemoDevice senderDevice = rcvd.getSenderDevice();
                 String sender = senderDevice.getJid().asUnescapedString();
                 String decryptedBody = rcvd.getBody();
                 BotConfiguration cfg = BotConfiguration.getInstance();
                 if (sender != null && decryptedBody != null) {
-                    if ((cfg.getListenOnlyAdmin() && cfg.getAdminJID().equalsIgnoreCase(sender.toString()))
+                    if ((cfg.getListenOnlyAdmin() && cfg.getAdminJID().equalsIgnoreCase(sender))
                             || !cfg.getListenOnlyAdmin()) {
-                        System.out.println("Received new message:");
                         System.out.println("\033[34m" + sender + ": " + decryptedBody + "\033[0m ");
-                        commandHandler.handleCommand(decryptedBody, sender.toString());
+                        commandHandler.handleCommand(decryptedBody, sender);
                     } else {
                         BotLogger.getInstance().logMsg("Got message by other user than administrator:\n"
                                 + "" + sender + ": " + decryptedBody);
@@ -84,29 +79,11 @@ public class MessageListener {
      * @return MessageListener of type OmemoMucMessageListener
      */
     public OmemoMucMessageListener setupOmemoMucMessageListener() {
-        return new OmemoMucMessageListener() {
-            @Override
-            public void onOmemoMucMessageReceived(MultiUserChat muc, Stanza stanza, OmemoMessage.Received rcvd) {
-                /*if (multiUserChat != null && bareJid != null && s != null) {
-                    System.out.println("\033[36m" + multiUserChat.getRoom() + ": " + bareJid + ": " + s + "\033[0m " + (omemoMessageInformation != null ? omemoMessageInformation : ""));
-                }*/
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-    }
-
-    /**
-     * Returns a MessageListener which listens for not encrypted incoming
-     * messages.
-     *
-     * @return MessageListener of type IncomingChatMessageListener
-     */
-    public IncomingChatMessageListener setupIncomingMessageListener() {
-        return new IncomingChatMessageListener() {
-            @Override
-            public void newIncomingMessage(EntityBareJid ebj, Message msg, Chat chat) {
-                System.out.println("Message received: " + ebj.asBareJid().toString() + ": " + msg.getBody());
-            }
+        return (MultiUserChat muc, Stanza stanza, OmemoMessage.Received rcvd) -> {
+            /*if (multiUserChat != null && bareJid != null && s != null) {
+            System.out.println("\033[36m" + multiUserChat.getRoom() + ": " + bareJid + ": " + s + "\033[0m " + (omemoMessageInformation != null ? omemoMessageInformation : ""));
+            }*/
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         };
     }
 }
