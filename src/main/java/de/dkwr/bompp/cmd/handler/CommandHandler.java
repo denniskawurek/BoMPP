@@ -16,7 +16,7 @@
  */
 package de.dkwr.bompp.cmd.handler;
 
-import de.dkwr.bompp.omemo.OmemoController;
+import de.dkwr.bompp.xmpp.OmemoController;
 
 /**
  * Abstract class for a command handler. All command handlers have to extend this class.

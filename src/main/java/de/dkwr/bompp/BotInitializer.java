@@ -19,11 +19,11 @@ package de.dkwr.bompp;
 import de.dkwr.bompp.cmd.exec.CommandQueue;
 import de.dkwr.bompp.cmd.handler.CommandHandler;
 import de.dkwr.bompp.cmd.handler.ScriptCommandHandler;
-import de.dkwr.bompp.omemo.BotTrustCallback;
+import de.dkwr.bompp.xmpp.BotTrustCallback;
 import de.dkwr.bompp.util.BotLogger;
-import de.dkwr.bompp.omemo.MessageListener;
-import de.dkwr.bompp.omemo.OmemoController;
-import de.dkwr.bompp.omemo.XMPPConnectionManager;
+import de.dkwr.bompp.xmpp.MessageListener;
+import de.dkwr.bompp.xmpp.OmemoController;
+import de.dkwr.bompp.xmpp.XMPPConnectionManager;
 import de.dkwr.bompp.util.BotConfiguration;
 
 import java.io.File;
