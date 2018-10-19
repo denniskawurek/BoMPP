@@ -26,7 +26,7 @@ public class Main {
             CommandQueue commandQueue = new CommandQueue(cfg.getMaxThreads(), cfg.getQueueSize());
 
             BotInitializer botInitializer = new BotInitializer();
-            botInitializer.init(cfg.getJID(), cfg.getPassword(), storePath, commandQueue, cfg.getEnableXMPPDebugMode());
+            botInitializer.init(cfg, commandQueue);
             cfg.clearPassword();
             
             BareJid adminJID = botInitializer.getOmemoController().getJid(cfg.getAdminJID());

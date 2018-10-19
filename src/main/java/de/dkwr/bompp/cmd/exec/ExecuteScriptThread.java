@@ -16,7 +16,7 @@
  */
 package de.dkwr.bompp.cmd.exec;
 
-import de.dkwr.bompp.omemo.OmemoController;
+import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
 
 import java.io.BufferedReader;

@@ -18,7 +18,7 @@ package de.dkwr.bompp.cmd.handler;
 
 import de.dkwr.bompp.cmd.exec.CommandQueue;
 import de.dkwr.bompp.cmd.exec.ExecuteScriptThread;
-import de.dkwr.bompp.omemo.OmemoController;
+import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.CommandList;
 
