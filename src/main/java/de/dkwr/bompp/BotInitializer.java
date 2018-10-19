@@ -23,7 +23,7 @@ import de.dkwr.bompp.xmpp.BotTrustCallback;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.xmpp.MessageListener;
 import de.dkwr.bompp.xmpp.OmemoController;
-import de.dkwr.bompp.xmpp.XMPPConnectionManager;
+import de.dkwr.bompp.xmpp.BotConnectionManager;
 import de.dkwr.bompp.util.BotConfiguration;
 
 import java.io.File;
@@ -73,7 +73,7 @@ public class BotInitializer {
             OmemoConfiguration.setAddOmemoHintBody(false);
 
             this.connection = new XMPPTCPConnection(cfg.getJID(), new String(cfg.getPassword()));
-            this.connection.addConnectionListener(new XMPPConnectionManager());
+            this.connection.addConnectionListener(new BotConnectionManager());
             
             ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(this.connection);
             reconnectionManager.enableAutomaticReconnection();
