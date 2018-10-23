@@ -17,6 +17,7 @@
 package de.dkwr.bompp.util;
 
 import java.util.Arrays;
+import org.jxmpp.jid.BareJid;
 
 /**
  * This class provides static methods to access the Bot configuration.
@@ -38,6 +39,8 @@ public class BotConfiguration {
     private Boolean listenOnlyAdmin;
     private Boolean notifyAdminOnStartup;
     private String trustedStatesFilePath;
+    
+    private BareJid chatOpenWithJID = null;
 
     private BotConfiguration() {
         super();
@@ -144,5 +147,23 @@ public class BotConfiguration {
      */
     public void clearPassword() {
         Arrays.fill(this.pwd, ' ');
+    }
+
+    public void openChat(BareJid jid) {
+        this.chatOpenWithJID = jid;
+    }
+
+    public void closeChat() {
+        this.chatOpenWithJID = null;
+    }
+
+    public Boolean isChatOpened() {
+        if(null == this.chatOpenWithJID) return false;
+        return true;
+    }
+    
+    public BareJid getOpenedChat() {
+        if(this.isChatOpened()) return this.chatOpenWithJID;
+        return null;
     }
 }

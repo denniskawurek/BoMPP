@@ -17,6 +17,7 @@
 package de.dkwr.bompp.cmd.handler;
 
 import de.dkwr.bompp.cmd.exec.CommandQueue;
+import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.CommandList;
@@ -40,6 +41,7 @@ public class BotCommandHandler implements CommandHandler {
     private final CommandQueue commandQueue;
     private final CommandHandler scriptCommandHandler;
     private final BareJid adminJID;
+    private final BotConfiguration cfg = BotConfiguration.getInstance();
 
     public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler, BareJid adminJID) {
         this.omemoController = omemoController;
@@ -72,6 +74,28 @@ public class BotCommandHandler implements CommandHandler {
                 System.out.println("Failed to send message.");
                 BotLogger.getInstance().logException(ex);
             }
+            return;
+        }
+
+        if (cmdArr[0].equalsIgnoreCase("/chat") && cmdArr.length == 2) {
+            if (cmdArr.length < 2) {
+                System.out.println("Error: To open a chat call\n"
+                        + "/chat [JID]");
+                return;
+            }
+
+            this.cfg.openChat(this.omemoController.getJid(cmdArr[1]));
+            System.out.println("Chat opened.");
+            return;
+        }
+
+        if (cmdArr[0].equalsIgnoreCase("/close")) {
+            if (this.cfg.isChatOpened()) {
+                this.cfg.closeChat();
+                System.out.println("Chat closed.");
+                return;
+            }
+            System.out.println("No chat opened.");
             return;
         }
 
@@ -125,8 +149,8 @@ public class BotCommandHandler implements CommandHandler {
             try {
                 this.omemoController.printSelfJID();
                 System.out.println(
-                        "Your fingerprint: " +
-                                this.omemoController.getFingerprint().toString()
+                        "Your fingerprint: "
+                        + this.omemoController.getFingerprint().toString()
                 );
                 return;
             } catch (Exception ex) {
@@ -170,17 +194,31 @@ public class BotCommandHandler implements CommandHandler {
             return;
         }
 
-        // if command does not exist print available commands
-        System.out.println(this.getAllCommandsAsString());
+        if (this.cfg.isChatOpened()) {
+            try {
+                System.out.println("Sending message to " + this.cfg.getOpenedChat().toString());
+                this.omemoController.sendMessage(this.cfg.getOpenedChat(), cmd);
+            } catch (Exception ex) {
+                BotLogger.getInstance().logException(ex);
+            }
+            return;
+        }
+
+        // if command does not exist AND no chat is opened print available commands
+        if (!this.cfg.isChatOpened()) {
+            System.out.println(this.getAllCommandsAsString());
+        }
     }
 
     @Override
     public String getAllCommandsAsString() {
         StringBuilder cmdStr = new StringBuilder();
         String listFmt = "%-25s%-25s\n";
-        
+
         cmdStr.append("Following commands are available:\n");
         cmdStr.append(String.format(listFmt, "/send [JID] [MESSAGE]", "Send a message to [JID]"));
+        cmdStr.append(String.format(listFmt, "/chat [JID]", "Open a chat with [JID] so you don't have to call the /send command."));
+        cmdStr.append(String.format(listFmt, "/close", "Close the chat"));
         cmdStr.append(String.format(listFmt, "/list", "List all devices"));
         cmdStr.append(String.format(listFmt, "/list [JID]", "List all devices for [JID]"));
         cmdStr.append(String.format(listFmt, "/trust [JID]", "Trust the identity of [JID]"));
@@ -192,7 +230,7 @@ public class BotCommandHandler implements CommandHandler {
         cmdStr.append(String.format(listFmt, "/commands", "Prints loaded commands"));
         cmdStr.append(String.format(listFmt, "/exec CMD", "Execute a command from Bot CLI"));
         cmdStr.append(String.format(listFmt, "/q", "Closes the connection & ends the bot"));
-        
+
         return cmdStr.toString();
     }
 
@@ -205,7 +243,7 @@ public class BotCommandHandler implements CommandHandler {
     public void setOmemoController(OmemoController omemoController) {
         this.omemoController = omemoController;
     }
-    
+
     public void sendAdminMessage(String message) {
         try {
             this.omemoController.sendMessage(this.adminJID, message);
