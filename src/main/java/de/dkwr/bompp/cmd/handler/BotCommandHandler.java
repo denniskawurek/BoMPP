@@ -141,7 +141,7 @@ public class BotCommandHandler implements CommandHandler {
                 );
                 return;
             } catch (Exception ex) {
-                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+                BotLogger.getInstance().logException(ex);
             }
         }
 
@@ -154,7 +154,7 @@ public class BotCommandHandler implements CommandHandler {
                 );
                 return;
             } catch (Exception ex) {
-                Logger.getLogger(BotCommandHandler.class.getName()).log(Level.SEVERE, null, ex);
+                BotLogger.getInstance().logException(ex);
             }
         }
 
