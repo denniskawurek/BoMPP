@@ -27,6 +27,7 @@ import java.util.Map;
 public class CommandList {
 
     private HashMap<String, String[]> cmdMap = new HashMap<>();
+    private HashMap<String, Boolean> collectOutputMap = new HashMap<>(); 
     private static final CommandList INSTANCE = new CommandList();
     
     private CommandList() {
@@ -61,9 +62,11 @@ public class CommandList {
      * @param script absolute path to the script
      * @param execType script type
      * @param description description of the script
+     * @param collectOutput if true: collects the output of the script and prints it afterwards if false: prints the output line after line without collecting it
      */
-    public void addCommand(String cmd, String script, String execType, String description) {
+    public void addCommand(String cmd, String script, String execType, String description, boolean collectOutput) {
         this.cmdMap.put(cmd, new String[]{script, execType, description});
+        this.collectOutputMap.put(cmd, collectOutput);
     }
 
     /**
@@ -75,6 +78,7 @@ public class CommandList {
      * <li>Script path</li>
      * <li>Script execution type</li>
      * <li>Description</li>
+     * <li>CollectOutput</li>
      * </ul>
      */
     public String[] getCommand(String cmd) {
@@ -88,12 +92,16 @@ public class CommandList {
     @Override
     public String toString() {
         StringBuilder cmdStr = new StringBuilder();
-        String listFmt = "%-25s%-25s\n";
+        String listFmt = "%-25s%-25s%-25s%s\n";
         
         for (Map.Entry<String, String[]> entry : this.cmdMap.entrySet()) {
-            cmdStr.append(String.format(listFmt, entry.getKey(), entry.getValue()[2]));
+            cmdStr.append(String.format(listFmt, entry.getKey(), entry.getValue()[2], "Collects output:", this.collectOutputMap.get(entry.getKey())));
         }
 
         return cmdStr.toString();
+    }
+
+    public boolean getCollectOutput(String cmd) {
+        return this.collectOutputMap.get(cmd);
     }
 }

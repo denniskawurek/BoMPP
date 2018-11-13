@@ -57,8 +57,8 @@ public class ScriptCommandHandler implements CommandHandler {
             cmd = cmd.toLowerCase();
             if (this.commandList.cmdExists(cmd)) {
                 String[] cmdAsArr = this.convertCmdToArr(cmd);
-
-                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, null, true, this.omemoController);
+                boolean collectOutput = this.commandList.getCollectOutput(cmd);
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, null, true, this.omemoController, collectOutput);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
                 System.out.println(this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
@@ -77,8 +77,8 @@ public class ScriptCommandHandler implements CommandHandler {
             cmd = cmd.toLowerCase();
             if (this.commandList.cmdExists(cmd)) {
                 String[] cmdAsArr = this.convertCmdToArr(cmd);
-
-                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController);
+                boolean collectOutput = this.commandList.getCollectOutput(cmd);
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController, collectOutput);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
                 this.omemoController.sendMessage(this.omemoController.getJid(clientJID),  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
@@ -96,6 +96,7 @@ public class ScriptCommandHandler implements CommandHandler {
         String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
         String scriptPath = cmdDetails[0];
         String execType = cmdDetails[1];
+        
         cmdAsArr[0] = scriptPath; // replaces the command with the path
 
         if(!execType.isEmpty()) {

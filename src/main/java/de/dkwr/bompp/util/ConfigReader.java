@@ -53,6 +53,7 @@ public class ConfigReader {
     private final String SCRIPT_KEY = "script";
     private final String ENABLE_XMPP_DEBUG = "enable_xmpp_debug";
     private final String NOTIFY_ADMIN_ON_STARTUP = "notify_admin_on_startup";
+    private final String COLLECT_OUTPUT_KEY = "collect_output";
 
     /**
      * Creates an object of the ConfigReader and reads the config file.
@@ -112,12 +113,13 @@ public class ConfigReader {
                 String description = (String) cmdObj.get(this.DESCRIPTION_KEY);
                 String exec_type = (String) cmdObj.get(this.EXEC_TYPE_KEY);
                 String script = (String) cmdObj.get(this.SCRIPT_KEY);
+                Boolean collectOutputStream = (Boolean) cmdObj.get(this.COLLECT_OUTPUT_KEY);
 
                 if (this.cmdList.cmdExists(cmd)) {
                     System.out.println("Error: Found multiple command " + cmd + "!\n"
                             + "Added the first occurence. Please check your config file.");
                 } else {
-                    this.cmdList.addCommand(cmd, script, exec_type, description);
+                    this.cmdList.addCommand(cmd, script, exec_type, description, collectOutputStream);
                 }
             }
 

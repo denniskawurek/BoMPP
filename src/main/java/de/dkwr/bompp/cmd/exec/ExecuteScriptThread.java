@@ -34,12 +34,14 @@ public class ExecuteScriptThread implements Runnable {
     List<String> paramList;
     private final String clientJID;
     private final OmemoController omemoController;
+    private final boolean collectOutputStream; // if true = collects the whole output and sends it when script has finished
 
-    public ExecuteScriptThread(String[] execArr, String clientJID, boolean showOutPutStream, OmemoController omemoController) {
+    public ExecuteScriptThread(String[] execArr, String clientJID, boolean showOutPutStream, OmemoController omemoController, boolean collectOutputStream) {
         this.clientJID = clientJID;
         this.paramList = Arrays.asList(execArr);
         this.showOutPutStream = showOutPutStream;
         this.omemoController = omemoController;
+        this.collectOutputStream = collectOutputStream;
     }
 
     @Override
@@ -52,19 +54,26 @@ public class ExecuteScriptThread implements Runnable {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(exec.getInputStream())
             );
-            String s;
+            String out;
             StringBuilder strBuilder = new StringBuilder();
             while (exec.isAlive()) {
                 if (this.showOutPutStream) {
-                    while ((s = reader.readLine()) != null) {
-                        System.out.println(s);
-                        strBuilder.append(s);
-                        strBuilder.append(System.getProperty("line.separator"));
+                    while ((out = reader.readLine()) != null) {
+                        if(this.clientJID != null && !this.collectOutputStream) {
+                            this.omemoController.sendMessage(this.omemoController.getJid(this.clientJID), out);
+                            System.out.println(out);
+                        } else if(this.clientJID == null && !this.collectOutputStream) {
+                            System.out.println(out);
+                        } else {
+                            //System.out.println(out);
+                            strBuilder.append(out);
+                            strBuilder.append(System.getProperty("line.separator"));
+                        }
                     }
                 }
             }
 
-            if(this.clientJID != null) {
+            if(this.clientJID != null && this.collectOutputStream) {
                 System.out.println("End of execution of " + paramList.get(0) + " for " + clientJID + " Exit code: " + exec.exitValue());
                 this.omemoController.sendMessage(this.omemoController.getJid(this.clientJID), strBuilder.toString());
             } else {
