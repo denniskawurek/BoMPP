@@ -26,9 +26,11 @@ import java.util.Map;
  */
 public class CommandList {
 
-    private HashMap<String, String[]> cmdMap = new HashMap<>();
-    private HashMap<String, Boolean> collectOutputMap = new HashMap<>(); 
+    //private HashMap<String, String[]> cmdMap = new HashMap<>();
+    //private HashMap<String, Boolean> collectOutputMap = new HashMap<>(); 
     private static final CommandList INSTANCE = new CommandList();
+    private HashMap<String, Command> cmdMap = new HashMap<>();
+    
     
     private CommandList() {
     }
@@ -58,30 +60,18 @@ public class CommandList {
     /**
      * Adds a new command to the list
      *
-     * @param cmd command
-     * @param script absolute path to the script
-     * @param execType script type
-     * @param description description of the script
-     * @param collectOutput if true: collects the output of the script and prints it afterwards if false: prints the output line after line without collecting it
+     * @param cmd the command object
      */
-    public void addCommand(String cmd, String script, String execType, String description, boolean collectOutput) {
-        this.cmdMap.put(cmd, new String[]{script, execType, description});
-        this.collectOutputMap.put(cmd, collectOutput);
+    public void addCommand(Command cmd) {
+        this.cmdMap.put(cmd.getCommandName(), cmd);
     }
 
     /**
      * Returns the details for a command.
      *
-     * @param cmd the command
-     * @return a String[] array containing three objects:<br/>
-     * <ul>
-     * <li>Script path</li>
-     * <li>Script execution type</li>
-     * <li>Description</li>
-     * <li>CollectOutput</li>
-     * </ul>
+     * @param cmd the command string which shall be returned
      */
-    public String[] getCommand(String cmd) {
+    public Command getCommand(String cmd) {
         return this.cmdMap.get(cmd);
     }
 
@@ -92,16 +82,12 @@ public class CommandList {
     @Override
     public String toString() {
         StringBuilder cmdStr = new StringBuilder();
-        String listFmt = "%-25s%-25s%-25s%s\n";
+        String listFmt = "%-25s%-25s%-25s%s";
         
-        for (Map.Entry<String, String[]> entry : this.cmdMap.entrySet()) {
-            cmdStr.append(String.format(listFmt, entry.getKey(), entry.getValue()[2], "Collects output:", this.collectOutputMap.get(entry.getKey())));
-        }
-
+        this.cmdMap.entrySet().forEach((entry) -> {
+            cmdStr.append(this.cmdMap.get(entry.getKey()).toString()).append("\n");
+        });
+        
         return cmdStr.toString();
-    }
-
-    public boolean getCollectOutput(String cmd) {
-        return this.collectOutputMap.get(cmd);
     }
 }

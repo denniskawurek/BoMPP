@@ -109,17 +109,18 @@ public class ConfigReader {
             for (int i = 0; i < cmdArr.size(); i++) {
                 JSONObject cmdObj = (JSONObject) cmdArr.get(i);
 
-                String cmd = (String) cmdObj.get(this.CMD_KEY);
+                String cmdKey = (String) cmdObj.get(this.CMD_KEY);
                 String description = (String) cmdObj.get(this.DESCRIPTION_KEY);
                 String exec_type = (String) cmdObj.get(this.EXEC_TYPE_KEY);
                 String script = (String) cmdObj.get(this.SCRIPT_KEY);
                 Boolean collectOutputStream = (Boolean) cmdObj.get(this.COLLECT_OUTPUT_KEY);
 
-                if (this.cmdList.cmdExists(cmd)) {
-                    System.out.println("Error: Found multiple command " + cmd + "!\n"
+                if (this.cmdList.cmdExists(cmdKey)) {
+                    System.out.println("Error: Found multiple command " + cmdKey + "!\n"
                             + "Added the first occurence. Please check your config file.");
                 } else {
-                    this.cmdList.addCommand(cmd, script, exec_type, description, collectOutputStream);
+                    Command cmd = new Command(cmdKey, script, exec_type, description, collectOutputStream);
+                    this.cmdList.addCommand(cmd);
                 }
             }
 

@@ -18,10 +18,10 @@ package de.dkwr.bompp.cmd.exec;
 
 import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
+import de.dkwr.bompp.util.Command;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,12 +36,12 @@ public class ExecuteScriptThread implements Runnable {
     private final OmemoController omemoController;
     private final boolean collectOutputStream; // if true = collects the whole output and sends it when script has finished
 
-    public ExecuteScriptThread(String[] execArr, String clientJID, boolean showOutPutStream, OmemoController omemoController, boolean collectOutputStream) {
+    public ExecuteScriptThread(Command command, String clientJID, boolean showOutPutStream, OmemoController omemoController) {
         this.clientJID = clientJID;
-        this.paramList = Arrays.asList(execArr);
+        this.paramList = command.getCmdExecutionList();
         this.showOutPutStream = showOutPutStream;
         this.omemoController = omemoController;
-        this.collectOutputStream = collectOutputStream;
+        this.collectOutputStream = command.getCollectOutput();
     }
 
     @Override

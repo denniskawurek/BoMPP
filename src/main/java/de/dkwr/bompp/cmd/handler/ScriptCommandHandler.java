@@ -20,6 +20,7 @@ import de.dkwr.bompp.cmd.exec.CommandQueue;
 import de.dkwr.bompp.cmd.exec.ExecuteScriptThread;
 import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.BotLogger;
+import de.dkwr.bompp.util.Command;
 import de.dkwr.bompp.util.CommandList;
 
 /**
@@ -56,9 +57,8 @@ public class ScriptCommandHandler implements CommandHandler {
         try {
             cmd = cmd.toLowerCase();
             if (this.commandList.cmdExists(cmd)) {
-                String[] cmdAsArr = this.convertCmdToArr(cmd);
-                boolean collectOutput = this.commandList.getCollectOutput(cmd);
-                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, null, true, this.omemoController, collectOutput);
+                Command command = this.commandList.getCommand(cmd);
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(command, null, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
                 System.out.println(this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
@@ -76,9 +76,8 @@ public class ScriptCommandHandler implements CommandHandler {
         try {
             cmd = cmd.toLowerCase();
             if (this.commandList.cmdExists(cmd)) {
-                String[] cmdAsArr = this.convertCmdToArr(cmd);
-                boolean collectOutput = this.commandList.getCollectOutput(cmd);
-                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(cmdAsArr, clientJID, true, this.omemoController, collectOutput);
+                Command command = this.commandList.getCommand(cmd);
+                ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(command, clientJID, true, this.omemoController);
                 this.commandQueue.addToQueue(executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
                 this.omemoController.sendMessage(this.omemoController.getJid(clientJID),  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
@@ -89,24 +88,6 @@ public class ScriptCommandHandler implements CommandHandler {
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
         }
-    }
-
-    private String[] convertCmdToArr(String cmd) {
-        String[] cmdAsArr = cmd.split(" ");
-        String[] cmdDetails = this.commandList.getCommand(cmdAsArr[0]);
-        String scriptPath = cmdDetails[0];
-        String execType = cmdDetails[1];
-        
-        cmdAsArr[0] = scriptPath; // replaces the command with the path
-
-        if(!execType.isEmpty()) {
-            String[] tempArr = new String[cmdAsArr.length+1];
-            System.arraycopy(cmdAsArr, 0, tempArr, 1, cmdAsArr.length);
-            tempArr[0] = execType;
-            cmdAsArr = tempArr;
-        }
-
-        return cmdAsArr;
     }
 
     @Override
