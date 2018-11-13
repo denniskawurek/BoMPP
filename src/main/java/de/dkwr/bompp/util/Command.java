@@ -55,19 +55,15 @@ public class Command {
         return this.execType;
     }
     
-    /**
-     * Returns the execution array
-     * @return {execution type, script path} if execution type != null, {script path} if execution type == null
-     */
-    public List<String> cmdExecutionArray() {
-        
-    }
-    
     @Override
     public String toString() {
         return this.cmd + " " + this.description + " " + this.collectOutput;
     }
-
+    
+    /**
+     * Returns command execution list
+     * @return execution list {exec type, script path} or {script path}
+     */
     public List<String> getCmdExecutionList() {
         List<String> l = new LinkedList<>();
         if(this.execType != null) {

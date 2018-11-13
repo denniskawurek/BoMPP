@@ -47,7 +47,7 @@ public class ExecuteScriptThread implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Executing " + paramList.get(0) + " for " + clientJID);
+            this.printExecutionStartInfo();
             Process exec;
             exec = new ProcessBuilder(paramList).start();
 
@@ -88,6 +88,16 @@ public class ExecuteScriptThread implements Runnable {
                     BotLogger.getInstance().logException(e);
                 }
             }
+        }
+    }
+
+    private void printExecutionStartInfo() {
+        if(this.clientJID == null) {
+            if(this.paramList.size() < 2) System.out.println("Executing " + this.paramList.get(0));
+            else System.out.println("Executing " + this.paramList.get(0) + " " + this.paramList.get(1));
+        } else {
+            if(this.paramList.size() < 2) System.out.println("Executing " + this.paramList.get(0) + " for " + this.clientJID);
+            else System.out.println("Executing " + this.paramList.get(0) + " " + this.paramList.get(1) + " for " + this.clientJID);
         }
     }
 
