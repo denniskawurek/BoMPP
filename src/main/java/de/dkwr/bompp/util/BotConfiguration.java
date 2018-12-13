@@ -41,6 +41,7 @@ public class BotConfiguration {
     private String trustedStatesFilePath;
     
     private BareJid chatOpenWithJID = null;
+    private boolean configLoaded = false;
 
     private BotConfiguration() {
         super();
@@ -165,5 +166,13 @@ public class BotConfiguration {
     public BareJid getOpenedChat() {
         if(this.isChatOpened()) return this.chatOpenWithJID;
         return null;
+    }
+    
+    public void setConfigLoaded(boolean loaded) {
+        this.configLoaded = loaded;
+    }
+
+    public boolean configLoaded() {
+        return this.configLoaded;
     }
 }

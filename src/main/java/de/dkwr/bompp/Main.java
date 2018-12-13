@@ -5,6 +5,7 @@ import de.dkwr.bompp.cmd.handler.BotCommandHandler;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.BotConfiguration;
+import de.dkwr.bompp.util.ConfigFileWatcher;
 import org.jxmpp.jid.BareJid;
 
 /**
@@ -18,7 +19,6 @@ public class Main {
             String storePath = getStoragePath(args);
             String fileSeparator = getFileSeparator();
 
-            BotLogger.getInstance();
             ConfigReader configReader = new ConfigReader(storePath, fileSeparator);
             configReader.loadConfigFile();
             BotConfiguration cfg = BotConfiguration.getInstance();
@@ -28,6 +28,9 @@ public class Main {
             BotInitializer botInitializer = new BotInitializer();
             botInitializer.init(cfg, commandQueue);
             cfg.clearPassword();
+            
+            ConfigFileWatcher cfgWatcher = new ConfigFileWatcher(configReader);
+            cfgWatcher.watch();
             
             BareJid adminJID = botInitializer.getOmemoController().getJid(cfg.getAdminJID());
             BotCommandHandler botCommandHandler = new BotCommandHandler(botInitializer.getOmemoController(), configReader, commandQueue, botInitializer.getScriptCommandHandler(), adminJID);

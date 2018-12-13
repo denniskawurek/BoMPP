@@ -21,6 +21,7 @@ import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.xmpp.OmemoController;
 import de.dkwr.bompp.util.CommandList;
+import de.dkwr.bompp.util.ConfigFileWatcher;
 import de.dkwr.bompp.util.ConfigReader;
 import de.dkwr.bompp.util.StaticScanner;
 import java.util.logging.Level;
@@ -188,6 +189,7 @@ public class BotCommandHandler implements CommandHandler {
                 this.omemoController.closeConnection();
                 StaticScanner.close();
                 this.commandQueue.quitCommandExecution();
+                ConfigFileWatcher.getInstance().stopWatching();
             } catch (Exception ex) {
                 BotLogger.getInstance().logException(ex);
             }

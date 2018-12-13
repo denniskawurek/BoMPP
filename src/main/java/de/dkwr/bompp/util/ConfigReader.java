@@ -35,7 +35,7 @@ public class ConfigReader {
     private final String storePath;
     private final String configFilePath;
     private final CommandList cmdList;
-    private final String CONFIG_NAME = "config.json";
+    private final static String CONFIG_NAME = "config.json";
     private final String TRUSTED_STATES_FILE_NAME = ".trustedStates";
 
     // Config file keys
@@ -125,9 +125,12 @@ public class ConfigReader {
             }
 
             System.out.println("Loaded config file with " + this.cmdList.getSize() + " commands");
+            cfg.setConfigLoaded(true);
         } catch (Exception ex) {
             BotLogger.getInstance().logException(ex);
-            System.exit(0);
+            
+            if(!BotConfiguration.getInstance().configLoaded())
+                System.exit(0);
         }
     }
 
@@ -182,5 +185,9 @@ public class ConfigReader {
             System.exit(1);
         }
         return console.readPassword("Enter password for server JID:\n");
+    }
+    
+    public static String getConfigName() {
+        return CONFIG_NAME;
     }
 }
