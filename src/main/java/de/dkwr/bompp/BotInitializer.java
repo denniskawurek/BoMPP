@@ -88,7 +88,7 @@ public class BotInitializer {
             
             this.omemoStore = OmemoService.getInstance().getOmemoStoreBackend();
             
-            this.connection.setReplyTimeout(10000);
+            this.connection.setReplyTimeout(30000);
             this.connection = connection.connect();
             this.connection.login();
             
