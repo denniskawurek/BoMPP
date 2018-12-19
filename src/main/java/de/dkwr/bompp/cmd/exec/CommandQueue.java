@@ -16,50 +16,68 @@
  */
 package de.dkwr.bompp.cmd.exec;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 /**
- * 
+ *
  * @author Dennis Kawurek
  */
 public class CommandQueue {
-    private final ThreadPoolExecutor threadPool;
-    
+
+    //private final ThreadPoolExecutor threadPool;
+    private final ExecutorService threadPool;
+    HashMap threads;
+
     /**
-     * 
+     *
      * @param nThreads
-     * @param blockingQueueSize 
+     * @param blockingQueueSize
      */
     public CommandQueue(int nThreads, int blockingQueueSize) {
-        RejectedExecutionHandlerImpl rejectionHandler = new RejectedExecutionHandlerImpl();
-        ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        
-        BlockingQueue queue = new ArrayBlockingQueue<>(blockingQueueSize);
-        
-        this.threadPool = new ThreadPoolExecutor(nThreads, nThreads,
-                0L, TimeUnit.MILLISECONDS, queue, threadFactory, rejectionHandler);
+        this.threads = new HashMap<String, Future<?>>();
+        this.threadPool = Executors.newFixedThreadPool(nThreads);
     }
-    
+
     /**
-     * Adds a new Task to the queue, which will be executed as soon as there is a free place in the thread pool.
+     * Adds a new Task to the queue, which will be executed as soon as there is
+     * a free place in the thread pool.
+     *
+     * @param cmd Command name to execute
      * @param executeScriptThread new Task to execute.
+     * @return true if command is added to queue, false if not. A reason can be that a command is already running.
      */
-    public void addToQueue(ExecuteScriptThread executeScriptThread) {
-        this.threadPool.execute(executeScriptThread);
+    public boolean addToQueue(String cmd, ExecuteScriptThread executeScriptThread) {
+        if (!this.threads.containsKey(cmd)) {
+            Future<?> f = this.threadPool.submit(executeScriptThread);
+            this.threads.put(cmd, f);
+            return true;
+        } else {
+            return checkIfCommandFinishedAndAddToQueue(cmd, executeScriptThread);
+        }
     }
     
+    private boolean checkIfCommandFinishedAndAddToQueue(String cmd, ExecuteScriptThread executeScriptThread) {
+        Future<?> thread = (Future) this.threads.get(cmd);
+        if(thread.isDone()) {
+            Future<?> f = this.threadPool.submit(executeScriptThread);
+            this.threads.put(cmd, f);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
-     * Waits until current running tasks are finished and new tasks are not accepted anymore.
+     * Waits until current running tasks are finished and new tasks are not
+     * accepted anymore.
      */
     public void quitCommandExecution() {
         this.threadPool.shutdown();
     }
-    
+
     /**
      * Stops immediately all current running tasks.
      */

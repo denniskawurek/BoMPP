@@ -59,7 +59,7 @@ public class ScriptCommandHandler implements CommandHandler {
             if (this.commandList.cmdExists(cmd)) {
                 Command command = this.commandList.getCommand(cmd);
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(command, null, true, this.omemoController);
-                this.commandQueue.addToQueue(executeScriptThread);
+                this.commandQueue.addToQueue(cmd, executeScriptThread);
             } else if(cmd.equalsIgnoreCase("help")) {
                 System.out.println(this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             } else {
@@ -78,7 +78,10 @@ public class ScriptCommandHandler implements CommandHandler {
             if (this.commandList.cmdExists(cmd)) {
                 Command command = this.commandList.getCommand(cmd);
                 ExecuteScriptThread executeScriptThread = new ExecuteScriptThread(command, clientJID, true, this.omemoController);
-                this.commandQueue.addToQueue(executeScriptThread);
+                boolean add = this.commandQueue.addToQueue(cmd, executeScriptThread);
+                if(!add) {
+                    this.omemoController.sendMessage(this.omemoController.getJid(clientJID), "Already running this command");
+                }
             } else if(cmd.equalsIgnoreCase("help")) {
                 this.omemoController.sendMessage(this.omemoController.getJid(clientJID),  this.COMMANDS_AVAILABLE_STR + this.getAllCommandsAsString());
             } else {
