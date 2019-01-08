@@ -101,7 +101,12 @@ public class OmemoController {
                 List<Presence> presences = roster.getAllPresences(jid);
                 for (Presence p : presences) {
                     System.out.println(p.getFrom() + " "
-                            + omemoManager.contactSupportsOmemo(p.getFrom().asDomainFullJidIfPossible().asBareJid()));
+                            + omemoManager
+                                    .contactSupportsOmemo(
+                                    p.getFrom()
+                                            .asEntityBareJidIfPossible()
+                                            .asBareJid()
+                                    ));
                 }
             } catch (Exception e) {
                 BotLogger.getInstance().logException(e);

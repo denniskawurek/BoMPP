@@ -17,15 +17,13 @@
 package de.dkwr.bompp.cmd.handler;
 
 import de.dkwr.bompp.cmd.exec.CommandQueue;
+import de.dkwr.bompp.cmd.handler.bot.*;
 import de.dkwr.bompp.util.BotConfiguration;
 import de.dkwr.bompp.util.BotLogger;
 import de.dkwr.bompp.xmpp.OmemoController;
-import de.dkwr.bompp.util.CommandList;
-import de.dkwr.bompp.util.ConfigFileWatcher;
 import de.dkwr.bompp.util.ConfigReader;
-import de.dkwr.bompp.util.StaticScanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Optional;
 import org.jxmpp.jid.BareJid;
 
 /**
@@ -43,155 +41,29 @@ public class BotCommandHandler implements CommandHandler {
     private final CommandHandler scriptCommandHandler;
     private final BareJid adminJID;
     private final BotConfiguration cfg = BotConfiguration.getInstance();
-
+    private HashMap<String, AbstractBotCommand> botCommands;
+    
     public BotCommandHandler(OmemoController omemoController, ConfigReader configReader, CommandQueue commandQueue, CommandHandler scriptCommandHandler, BareJid adminJID) {
         this.omemoController = omemoController;
         this.configReader = configReader;
         this.commandQueue = commandQueue;
         this.scriptCommandHandler = scriptCommandHandler;
         this.adminJID = adminJID;
+        this.initializeCommands();
     }
 
     @Override
     public void handleCommand(String cmd) {
-        String[] cmdArr = cmd.split(" ");
+        String command = cmd.split(" ")[0];
+        Optional<String> paramsOptional = this.getParamsOptional(cmd);
 
-        if (cmdArr[0].equalsIgnoreCase("/help")) {
-            System.out.println(this.getAllCommandsAsString());
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/send")) {
-            if (cmdArr.length < 3) {
-                System.out.println("Error: To send a message you have to call\n"
-                        + "/send [JID] [MESSAGE]");
-                return;
-            }
+        if (this.botCommands.containsKey(command)) {
             try {
-                String message = cmd.substring(cmd.indexOf(' ')).trim();
-                message = message.substring(message.indexOf(' ')).trim();
-                this.omemoController.sendMessage(this.omemoController.getJid(cmdArr[1]), message);
-            } catch (Exception ex) {
-                System.out.println("Failed to send message.");
-                BotLogger.getInstance().logException(ex);
-            }
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/chat") && cmdArr.length == 2) {
-            if (cmdArr.length < 2) {
-                System.out.println("Error: To open a chat call\n"
-                        + "/chat [JID]");
-                return;
-            }
-
-            this.cfg.openChat(this.omemoController.getJid(cmdArr[1]));
-            System.out.println("Chat opened.");
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/close")) {
-            if (this.cfg.isChatOpened()) {
-                this.cfg.closeChat();
-                System.out.println("Chat closed.");
-                return;
-            }
-            System.out.println("No chat opened.");
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/list")) {
-            try {
-                if (cmdArr.length == 1) {
-                    this.omemoController.listAll(null);
-                } else if (cmdArr.length == 2) {
-                    this.omemoController.listAll(cmdArr[0]);
-                }
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/trust")) {
-            if (cmdArr.length != 2) {
-                return;
-            }
-            this.omemoController.trustIdentities(cmdArr[1]);
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/clear")) {
-            this.omemoController.clearDeviceList();
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/regenerate")) {
-            try {
-                this.omemoController.regenerateKeys();
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/fingerprint")) {
-            try {
-                System.out.println(
-                        this.omemoController.getFingerprint().toString()
-                );
-                return;
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/which")) {
-            try {
-                this.omemoController.printSelfJID();
-                System.out.println(
-                        "Your fingerprint: "
-                        + this.omemoController.getFingerprint().toString()
-                );
-                return;
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/reload")) {
-            try {
-                this.configReader.reloadConfigFile();
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/commands")) {
-            try {
-                System.out.println(CommandList.getInstance().toString());
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
-            }
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/exec")) {
-            String execCmd = cmd.substring(cmdArr[0].length() + 1);
-            System.out.println(execCmd);
-            this.scriptCommandHandler.handleCommand(execCmd);
-            return;
-        }
-
-        if (cmdArr[0].equalsIgnoreCase("/q")) {
-            try {
-                this.omemoController.closeConnection();
-                StaticScanner.close();
-                this.commandQueue.quitCommandExecution();
-                ConfigFileWatcher.getInstance().stopWatching();
-            } catch (Exception ex) {
-                BotLogger.getInstance().logException(ex);
+                this.botCommands
+                        .get(command)
+                        .exec(command, paramsOptional);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
             return;
         }
@@ -206,34 +78,16 @@ public class BotCommandHandler implements CommandHandler {
             return;
         }
 
-        // if command does not exist AND no chat is opened print available commands
+        // if command does not exist AND no chat is opened print error message
         if (!this.cfg.isChatOpened()) {
-            System.out.println(this.getAllCommandsAsString());
+            System.out.println("Error: Don't know this command.");
+            return;
         }
     }
 
     @Override
     public String getAllCommandsAsString() {
-        StringBuilder cmdStr = new StringBuilder();
-        String listFmt = "%-25s%-25s\n";
-
-        cmdStr.append("Following commands are available:\n");
-        cmdStr.append(String.format(listFmt, "/send [JID] [MESSAGE]", "Send a message to [JID]"));
-        cmdStr.append(String.format(listFmt, "/chat [JID]", "Open a chat with [JID] so you don't have to call the /send command."));
-        cmdStr.append(String.format(listFmt, "/close", "Close the chat"));
-        cmdStr.append(String.format(listFmt, "/list", "List all devices"));
-        cmdStr.append(String.format(listFmt, "/list [JID]", "List all devices for [JID]"));
-        cmdStr.append(String.format(listFmt, "/trust [JID]", "Trust the identity of [JID]"));
-        cmdStr.append(String.format(listFmt, "/clear", "Clear the device list"));
-        cmdStr.append(String.format(listFmt, "/regenerate", "Regenerate keys"));
-        cmdStr.append(String.format(listFmt, "/fingerprint", "Print the bots fingerprint"));
-        cmdStr.append(String.format(listFmt, "/which", "Print bots JID and DeviceId"));
-        cmdStr.append(String.format(listFmt, "/reload", "Reloads the configuration file"));
-        cmdStr.append(String.format(listFmt, "/commands", "Prints loaded commands"));
-        cmdStr.append(String.format(listFmt, "/exec CMD", "Execute a command from Bot CLI"));
-        cmdStr.append(String.format(listFmt, "/q", "Closes the connection & ends the bot"));
-
-        return cmdStr.toString();
+        return "Type /help to see available commands.\n";
     }
 
     @Override
@@ -250,8 +104,50 @@ public class BotCommandHandler implements CommandHandler {
         try {
             this.omemoController.sendMessage(this.adminJID, message);
         } catch (Exception ex) {
-            System.out.println("Failed to send message to Admin.");
+            System.out.println("Failed to send message to admin.");
             BotLogger.getInstance().logException(ex);
         }
+    }
+
+    private Optional<String> getParamsOptional(String cmd) {
+        if (cmd.indexOf(' ') == -1) { // if it has only the command, then params are empty
+            return Optional.empty();
+        } else {  // cuts the command from the String away, to get only params
+            String params = cmd.substring(cmd.indexOf(' ')).trim();
+            return Optional.of(params);
+        }
+    }
+
+    private void initializeCommands() {
+        this.botCommands = new HashMap<>();
+        HelpCommand helpCmd = new HelpCommand(this.botCommands);
+        SendCmd sendCmd = new SendCmd(this.omemoController);
+        ChatCommand chatCmd = new ChatCommand(this.omemoController);
+        ListCommand listCmd = new ListCommand(this.omemoController);
+        CloseChatCommand closeCmd = new CloseChatCommand();
+        TrustCommand trustCmd = new TrustCommand(this.omemoController);
+        ClearDeviceListCommand clearCmd = new ClearDeviceListCommand(this.omemoController);
+        RegenerateKeysCommand regenerateCmd = new RegenerateKeysCommand(this.omemoController);
+        FingerprintCommand fingerprintCmd = new FingerprintCommand(this.omemoController);
+        WhichCommand whichCmd = new WhichCommand(this.omemoController);
+        PrintCommandsCommand commandsCmd = new PrintCommandsCommand();
+        ReloadConfigCommand reloadCmd = new ReloadConfigCommand(this.configReader);
+        ExecCommand execCmd = new ExecCommand(this.scriptCommandHandler);
+        QuitCommand quitCmd = new QuitCommand(this.omemoController, this.commandQueue);
+
+        botCommands.put(helpCmd.getCommand(), helpCmd);
+        botCommands.put(sendCmd.getCommand(), sendCmd);
+        botCommands.put(chatCmd.getCommand(), chatCmd);
+        botCommands.put(listCmd.getCommand(), listCmd);
+        botCommands.put(closeCmd.getCommand(), closeCmd);
+        botCommands.put(trustCmd.getCommand(), trustCmd);
+        botCommands.put(clearCmd.getCommand(), clearCmd);
+        botCommands.put(regenerateCmd.getCommand(), regenerateCmd);
+        botCommands.put(fingerprintCmd.getCommand(), fingerprintCmd);
+        botCommands.put(whichCmd.getCommand(), whichCmd);
+        botCommands.put(commandsCmd.getCommand(), commandsCmd);
+        botCommands.put(reloadCmd.getCommand(), reloadCmd);
+        botCommands.put(execCmd.getCommand(), execCmd);
+        botCommands.put(quitCmd.getCommand(), quitCmd);
     }
 }
