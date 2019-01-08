@@ -49,14 +49,12 @@ public class BotCommandHandler implements CommandHandler {
         this.commandQueue = commandQueue;
         this.scriptCommandHandler = scriptCommandHandler;
         this.adminJID = adminJID;
-        this.botCommands = botCommands;
         this.initializeCommands();
     }
 
     @Override
     public void handleCommand(String cmd) {
         String command = cmd.split(" ")[0];
-        String[] cmdArr = cmd.split(" "); // ToDo: remove this
         Optional<String> paramsOptional = this.getParamsOptional(cmd);
 
         if (this.botCommands.containsKey(command)) {
